@@ -1,13 +1,13 @@
 {
-    "name": "csharp-format-usings",
-    "displayName": "C# Format Usings",
-    "description": "Sort C# using statements and remove unnecessary usings",
+    "name": "csharp-organize-usings",
+    "displayName": "C# Organize Usings",
+    "description": "Keeps your C# using statements free of unnecessary references and sorted how you choose.",
     "icons": {
         "default": "icon-128.png"
     },
     "icon": "icon-256.png",
-    "version": "0.0.4",
-    "publisher": "gaoshan0621",
+    "version": "1.0.0",
+    "publisher": "Jeremy Caron",
     "engines": {
         "vscode": "^1.48.0"
     },
@@ -18,53 +18,54 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:csharpFormatUsings.formatUsings"
+        "onStartupFinished",
+        "onLanguage:csharp"
     ],
     "author": {
-        "name": "Shan Gao",
-        "email": "gaoshan0621@gmail.com"
+        "name": "Jeremy Caron",
+        "email": "jeremy.caron@gmail.com"
     },
     "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
-                "command": "csharpFormatUsings.formatUsings",
-                "title": "Format Usings"
+                "command": "csharpOrganizeUsings.organize",
+                "title": "Organize Usings"
             }
         ],
         "menus": {
             "editor/context": [
                 {
-                    "command": "csharpFormatUsings.formatUsings",
+                    "command": "csharpOrganizeUsings.organize",
                     "group": "1_modification",
                     "when": "editorLangId == 'csharp' && !editorReadonly"
                 }
             ]
         },
         "configuration": {
-            "title": "C# Format Usings configuration",
+            "title": "C# Organize Usings Configuration",
             "properties": {
-                "csharpFormatUsings.sortOrder": {
+                "csharpOrganizeUsings.sortOrder": {
                     "type": "string",
                     "default": "System Microsoft",
                     "description": "Put namespaces in proper order. Values should be split with space."
                 },
-                "csharpFormatUsings.splitGroups": {
+                "csharpOrganizeUsings.splitGroups": {
                     "type": "boolean",
                     "default": true,
                     "description": "Insert blank line between using blocks grouped by first part of namespace."
                 },
-                "csharpFormatUsings.removeUnnecessaryUsings": {
+                "csharpOrganizeUsings.removeUnnecessaryUsings": {
                     "type": "boolean",
                     "default": true,
                     "description": "Remove unnecessary usings."
                 },
-                "csharpFormatUsings.numEmptyLinesAfterUsings": {
+                "csharpOrganizeUsings.numEmptyLinesAfterUsings": {
                     "type": "number",
                     "default": 1,
                     "description": "the number of empty lines would be preserved between using statements and code block."
                 },
-                "csharpFormatUsings.numEmptyLinesBeforeUsings": {
+                "csharpOrganizeUsings.numEmptyLinesBeforeUsings": {
                     "type": "number",
                     "default": 1,
                     "description": "The maximum number of empty lines before using statements if there are characters, like comments, before usings."
@@ -75,10 +76,12 @@
     "keywords": [
         "C#",
         "csharp",
+        "organize",
         "format",
         "sort",
         "remove",
-        "using"
+        "using",
+        "usings"
     ],
     "scripts": {
         "vscode:prepublish": "npm run compile",
@@ -90,25 +93,29 @@
         "package": "vsce package"
     },
     "devDependencies": {
+        "@types/glob": "^8.1.0",
+        "@types/mocha": "^10.0.1",
+        "@types/node": "20.2.5",
         "@types/vscode": "^1.48.0",
-        "@types/glob": "^7.1.1",
-        "@types/mocha": "^7.0.2",
-        "@types/node": "^13.11.0",
-        "eslint": "^6.8.0",
-        "@typescript-eslint/parser": "^2.30.0",
-        "@typescript-eslint/eslint-plugin": "^2.30.0",
-        "glob": "^7.1.6",
-        "mocha": "^7.1.2",
-        "typescript": "^3.8.3",
-        "vscode-test": "^1.3.0"
+        "@typescript-eslint/eslint-plugin": "^5.59.8",
+        "@typescript-eslint/parser": "^5.59.8",
+        "@vscode/test-electron": "^2.3.2",
+        "eslint": "^8.41.0",
+        "glob": "^8.1.0",
+        "mocha": "^10.2.0",
+        "typescript": "^5.1.3",
+        "vscode-languageclient": "^8.1.0"
     },
     "license": "MIT",
-    "homepage": "https://github.com/gaoshan0621/vscode-csharp-format-usings",
+    "homepage": "https://github.com/JeremyCaron/vscode-csharp-organize-usings",
     "repository": {
         "type": "git",
-        "url": "https://github.com/gaoshan0621/vscode-csharp-format-usings"
+        "url": "https://github.com/JeremyCaron/vscode-csharp-organize-usings"
     },
     "bugs": {
-        "url": "https://github.com/gaoshan0621/vscode-csharp-format-usings/issues"
+        "url": "https://github.com/JeremyCaron/vscode-csharp-organize-usings/issues"
+    },
+    "dependencies": {
+        "watch": "^1.0.2"
     }
 }

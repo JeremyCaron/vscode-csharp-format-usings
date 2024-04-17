@@ -48,16 +48,21 @@ export function process(editor: vs.TextEditor, options: IFormatOptions): string 
     content = replaceCode(content, /\s*(using\s+[.\w]+;\s*)+/gm, rawBlock => {
         const lines = rawBlock.split(endOfline)
             .map(l => l?.trim() ?? '');     // remove heading and trailing whitespaces
-        const usings = lines.filter(l => l.length > 0);
+        
+        var usings = lines; // .filter(l => l.length > 0);
 
         if (options.removeUnnecessaryUsings) {
             removeUnncessaryUsings(editor, usings, firstUsingLine);
         }
 
-        sortUsings(usings, options);
+        usings = usings.filter(using => using.length > 0);
 
-        if (options.splitGroups) {
-            splitGroups(usings);
+        if (usings.length > 0) {
+            sortUsings(usings, options);
+
+            if (options.splitGroups) {
+                splitGroups(usings);
+            }
         }
 
         // if there are characters, like comments, before usings
@@ -84,7 +89,8 @@ export function process(editor: vs.TextEditor, options: IFormatOptions): string 
 }
 
 export function removeUnncessaryUsings(editor: vs.TextEditor, usings: string[], firstUsingLine : number) {
-    const unnecessaryUsingIndexs = vs.languages.getDiagnostics(editor.document.uri)
+    const diagnostics = vs.languages.getDiagnostics(editor.document.uri);
+    const unnecessaryUsingIndexs = diagnostics
         .filter(diagnostic => diagnostic.source === 'csharp' && 'CS8019' === diagnostic.code?.toString())
         .map(diagnostic => diagnostic.range.start.line - firstUsingLine);
 
