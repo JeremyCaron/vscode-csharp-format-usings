@@ -2,7 +2,7 @@ import * as vs from 'vscode';
 import * as formatting from './formatting';
 
 const getFormatOptions = (): formatting.IFormatOptions => {
-    const cfg = vs.workspace.getConfiguration('csharpFormatUsings');
+    const cfg = vs.workspace.getConfiguration('csharpOrganizeUsings');
 
     return {
         sortOrder: cfg.get<string>('sortOrder', 'System Microsoft'),

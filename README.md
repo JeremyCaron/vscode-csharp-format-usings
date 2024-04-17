@@ -1,4 +1,4 @@
-# CSharpFormatUsings for Visual Studio Code
+# CSharpOrganizeUsings for Visual Studio Code
 This extension helps to format C# using statements.
 Forked from [CSharpSortUsings](https://marketplace.visualstudio.com/items?itemName=jongrant.csharpsortusings), **with bug fixes and new features**.
 ## Features
