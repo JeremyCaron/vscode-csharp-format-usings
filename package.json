@@ -76,10 +76,12 @@
     "keywords": [
         "C#",
         "csharp",
+        "organize",
         "format",
         "sort",
         "remove",
-        "using"
+        "using",
+        "usings"
     ],
     "scripts": {
         "vscode:prepublish": "npm run compile",
