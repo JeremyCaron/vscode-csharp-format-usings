@@ -1,6 +1,6 @@
 # C# Organize Usings for Visual Studio Code
 
-This extension helps to organize C# using statements.
+This extension helps organize C# using statements.
 
 Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?itemName=gaoshan0621.csharp-format-usings) (last modified Aug 22, 2020), which was forked from [CSharpSortUsings](https://marketplace.visualstudio.com/items?itemName=jongrant.csharpsortusings).  Updated with bug fixes for 2024.
 
