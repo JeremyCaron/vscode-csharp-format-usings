@@ -7,7 +7,7 @@
     },
     "icon": "icon-256.png",
     "version": "1.0.0",
-    "publisher": "Jeremy Caron",
+    "publisher": "jeremycaron",
     "engines": {
         "vscode": "^1.48.0"
     },
