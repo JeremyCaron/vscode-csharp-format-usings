@@ -27,7 +27,7 @@ Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?item
 
 ## Installation of release version
 
-Use instructions from marketplace: [CSharp Format Usings](https://marketplace.visualstudio.com/items?itemName=jeremycaron.csharp-organize-usings)
+Use instructions from marketplace: [CSharp Organize Usings](https://marketplace.visualstudio.com/items?itemName=jeremycaron.csharp-organize-usings)
 
 ## Installation from sources
 
