@@ -38,7 +38,8 @@ const getNamespaceOrder = (ns: string, orderedNames: string[]): number => {
 };
 
 export function process(editor: vs.TextEditor, options: IFormatOptions): string {
-    var content = editor.document.getText();
+    const beforeContent = editor.document.getText();
+    var content = beforeContent;
     const endOfline = editor.document.eol === vs.EndOfLine.LF ? '\n' : '\r\n';
     const firstUsing = content.search(/using\s+[.\w]+;/);
     const firstUsingLine = content.substring(0, firstUsing)
@@ -85,7 +86,10 @@ export function process(editor: vs.TextEditor, options: IFormatOptions): string 
 
         return usings.join(endOfline);
     });
-    return content;
+
+    // return nothing if the input wasn't changed, no reason to alter the text in the editor (code that calls this is 
+    // seemingly smart enough to not wipe the entire contents of the editor window)
+    return (content !== beforeContent) ? content : "";
 }
 
 export function removeUnncessaryUsings(editor: vs.TextEditor, usings: string[], firstUsingLine : number) {
