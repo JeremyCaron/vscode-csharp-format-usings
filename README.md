@@ -16,6 +16,7 @@ Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?item
 * (v1.0.0) Now correctly removes unused usings when ALL of a classes usings are unnecessary.
 * (v1.0.0) Now correctly removes unused usings when there are extra blank lines between namespace groups (this was previously causing the wrong lines to be removed from the source file).
 * (v1.0.1) Fixed editor jumpiness when running "Organize Usings" on a file that needs no changes.
+* (v1.0.2) Better fix for editor jumpiness per the recommendation at https://github.com/microsoft/vscode/issues/32058#issuecomment-322162175 to use TextEditorEdit.delete/insert instead of replace.
 
 ## Extension Settings
 
