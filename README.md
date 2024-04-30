@@ -6,16 +6,16 @@ Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?item
 
 ## Features
 
-* Sorts usings in alphabetical order. Doubles will be removed automatically. - *Comes from CSharpSortUsings*
-* Triggered via context menu or "Format Usings" command.
-* Remove unnecessary usings.
-* Specify the number of empty lines before using statements, such as between licenses, authors info and usings statements.
-* Specify the number of empty lines between using statements and code blocks.
+* Sorts usings in alphabetical order and removes duplicates.
+* Triggered via context menu or "Organize Usings" command.
+* Removes unnecessary usings (enabled by default but can be disabled).
+* Offers multiple configurable settings for formatting the usings section, see "Extension Settings" below.
 
 ## Bug fixes:
 
-* Now correctly removes unused usings when ALL of a classes usings are unnecessary
-* Now correctly removes unused usings when there are extra blank lines between namespace groups (this was previously causing the wrong lines to be removed from the source file)
+* (v1.0.0) Now correctly removes unused usings when ALL of a classes usings are unnecessary.
+* (v1.0.0) Now correctly removes unused usings when there are extra blank lines between namespace groups (this was previously causing the wrong lines to be removed from the source file).
+* (v1.0.1) Fixed editor jumpiness when running "Organize Usings" on a file that needs no changes.
 
 ## Extension Settings
 
@@ -27,7 +27,7 @@ Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?item
 
 ## Installation of release version
 
-Use instructions from marketplace: [CSharp Organize Usings](https://marketplace.visualstudio.com/items?itemName=jeremycaron.csharp-organize-usings)
+Use instructions from marketplace: [C# Organize Usings](https://marketplace.visualstudio.com/items?itemName=jeremycaron.csharp-organize-usings)
 
 ## Installation from sources
 
