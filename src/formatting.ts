@@ -46,7 +46,7 @@ export function process(editor: vs.TextEditor, options: IFormatOptions): string 
         .split(endOfline)
         .length - 1;
 
-    content = replaceCode(content, /\s*(using\s+[.\w]+;\s*)+/gm, rawBlock => {
+    content = replaceCode(content, /\s*(using\s+(?!(\w+\s+)+\w+\s*=\s*)(\[.\w+\]|(\w+\s*=\s*)?\w+(\.\w+)*);?\s*)+/gm, rawBlock => {
         const lines = rawBlock.split(endOfline)
             .map(l => l?.trim() ?? '');     // remove heading and trailing whitespaces
         
@@ -111,11 +111,27 @@ export function removeUnncessaryUsings(editor: vs.TextEditor, usings: string[], 
 
 export function sortUsings(usings: string[], options: IFormatOptions) {
     const trimSemiColon = /^\s+|;\s*$/;
-    usings.sort((a: string, b: string) => {
+    const aliasRegex = /^\s*using\s+(\w+\s*=\s*)?/;
+
+    const aliases: string[] = [];
+    const nonAliases: string[] = [];
+
+    for (const statement of usings) {
+        const match = statement.match(aliasRegex);
+        if (match && match[1]) {
+            aliases.push(statement);
+        } else {
+            nonAliases.push(statement);
+        }
+    }
+
+    const sortUsingsHelper = (a: string, b: string) => {
         let res = 0;
+
         // because we keep lines with indentation and semicolons.
         a = a.replace(trimSemiColon, '');
         b = b.replace(trimSemiColon, '');
+
         if (options.sortOrder) {
             const ns = options.sortOrder.split(' ');
             res -= getNamespaceOrder(a.substr(6), ns);
@@ -124,6 +140,7 @@ export function sortUsings(usings: string[], options: IFormatOptions) {
                 return res;
             }
         }
+
         for (let i = 0; i < a.length; i++) {
             const lhs = a[i].toLowerCase();
             const rhs = b[i] ? b[i].toLowerCase() : b[i];
@@ -137,20 +154,45 @@ export function sortUsings(usings: string[], options: IFormatOptions) {
                 break;
             }
         }
+
         return res === 0 && b.length > a.length ? -1 : res;
-    });
+    };
+
+    nonAliases.sort(sortUsingsHelper);
+    aliases.sort(sortUsingsHelper);
+
+    usings.length = 0;
+
+    // Push the sorted nonAliases and aliases to the original usings array
+    usings.push(...nonAliases, ...aliases);
 }
 
-function splitGroups(usings: string[]) {
+export function splitGroups(usings: string[]) {
     let i = usings.length - 1;
     const baseNS = /\s*using\s+(\w+).*/;
+    const aliasNS = /\s*using\s+\w+\s*=/;
     let lastNS = usings[i--].replace(baseNS, '$1');
     let nextNS: string;
+    let foundAlias = false;
+
     for (; i >= 0; i--) {
+        if (aliasNS.test(usings[i])) {
+            foundAlias = true;
+            continue;
+        }
+
         nextNS = usings[i].replace(baseNS, '$1');
         if (nextNS !== lastNS) {
             lastNS = nextNS;
             usings.splice(i + 1, 0, '');
         }
+    }
+
+    if (foundAlias) {
+        let j = usings.length - 1;
+        while (j >= 0 && aliasNS.test(usings[j])) {
+            j--;
+        }
+        usings.splice(j + 1, 0, '');
     }
 }
