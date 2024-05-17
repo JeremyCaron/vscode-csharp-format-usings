@@ -187,12 +187,4 @@ export function splitGroups(usings: string[]) {
             usings.splice(i + 1, 0, '');
         }
     }
-
-    if (foundAlias) {
-        let j = usings.length - 1;
-        while (j >= 0 && aliasNS.test(usings[j])) {
-            j--;
-        }
-        usings.splice(j + 1, 0, '');
-    }
 }
