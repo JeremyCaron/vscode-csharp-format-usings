@@ -178,11 +178,9 @@ export function splitGroups(usings: string[]) {
     const aliasNS = /\s*using\s+\w+\s*=/;
     let lastNS = usings[i--].replace(baseNS, '$1');
     let nextNS: string;
-    let foundAlias = false;
 
     for (; i >= 0; i--) {
         if (aliasNS.test(usings[i])) {
-            foundAlias = true;
             continue;
         }
 
