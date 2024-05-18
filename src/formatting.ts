@@ -15,7 +15,7 @@ export interface IResult {
 
 declare type Func<T, S> = (...args: S[]) => T;
 
-// this regex had to get a lot more compolicated; it now requires the line it matches to end in a semicolon,
+// this regex had to get a lot more complicated; it now requires the line it matches to end in a semicolon,
 // includes aliased usings and excludes things like comments that contain the word `using` and the using syntax for 
 // disposables (both with and without parens - really unfortunate overloading of the using keyword there C#...)
 export const USING_REGEX = /^(?!\/\/)(?!.*\/\*.*\*\/)\s*(using\s+(?!(\w+\s+)+\w+\s*=\s*)(\[.\w+\]|(\w+\s*=\s*)?\w+(\.\w+)*);\s*)+$/gm;
