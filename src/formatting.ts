@@ -89,7 +89,8 @@ export function process(editor: vs.TextEditor, options: IFormatOptions): string 
             }
         }
 
-        return usings.join(endOfline);
+        const result = usings.join(endOfline);
+        return result;
     });
 
     // return nothing if the input wasn't changed, no reason to alter the text in the editor (code that calls this is 

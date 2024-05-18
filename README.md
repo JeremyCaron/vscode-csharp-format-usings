@@ -1,8 +1,8 @@
 # C# Organize Usings for Visual Studio Code
 
-This extension helps organize C# using statements.
+This extension helps organize C# using statements.  Updated with bug fixes for 2024.
 
-Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?itemName=gaoshan0621.csharp-format-usings) (last modified Aug 22, 2020), which was forked from [CSharpSortUsings](https://marketplace.visualstudio.com/items?itemName=jongrant.csharpsortusings).  Updated with bug fixes for 2024.
+Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?itemName=gaoshan0621.csharp-format-usings) (an abandoned extension that was last modified on Aug 22, 2020), which was forked from [CSharpSortUsings](https://marketplace.visualstudio.com/items?itemName=jongrant.csharpsortusings).
 
 ## Features
 
@@ -11,7 +11,7 @@ Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?item
 * Removes unnecessary usings (enabled by default but can be disabled).
 * Offers multiple configurable settings for formatting the usings section, see "Extension Settings" below.
 
-## Bug fixes
+## Bug Fixes
 
 * (v1.0.3) Properly handle aliased using directives, without breaking places that use "using [type] [variableName]" syntax.
 * (v1.0.2) Better fix for editor jumpiness per the recommendation at https://github.com/microsoft/vscode/issues/32058#issuecomment-322162175 to use TextEditorEdit.delete/insert instead of replace.
