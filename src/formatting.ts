@@ -15,6 +15,11 @@ export interface IResult {
 
 declare type Func<T, S> = (...args: S[]) => T;
 
+// this regex had to get a lot more compolicated; it now requires the line it matches to end in a semicolon,
+// includes aliased usings and excludes things like comments that contain the word `using` and the using syntax for 
+// disposables (both with and without parens - really unfortunate overloading of the using keyword there C#...)
+export const USING_REGEX = /^(?!\/\/)(?!.*\/\*.*\*\/)\s*(using\s+(?!(\w+\s+)+\w+\s*=\s*)(\[.\w+\]|(\w+\s*=\s*)?\w+(\.\w+)*);\s*)+$/gm;
+
 const replaceCode = (source: string, condition: RegExp, cb: Func<string, string>): string => {
     const flags = condition.flags.replace(/[gm]/g, '');
     const regexp = new RegExp(condition.source, `gm${flags}`);
@@ -46,7 +51,7 @@ export function process(editor: vs.TextEditor, options: IFormatOptions): string 
         .split(endOfline)
         .length - 1;
 
-    content = replaceCode(content, /\s*(using\s+(?!(\w+\s+)+\w+\s*=\s*)(\[.\w+\]|(\w+\s*=\s*)?\w+(\.\w+)*);?\s*)+/gm, rawBlock => {
+    content = replaceCode(content, USING_REGEX, rawBlock => {
         const lines = rawBlock.split(endOfline)
             .map(l => l?.trim() ?? '');     // remove heading and trailing whitespaces
         
@@ -78,8 +83,8 @@ export function process(editor: vs.TextEditor, options: IFormatOptions): string 
 
         // if no using left, there is no need to insert extra empty lines
         if (usings.length > 0) {
-            // Preserve num empty lines between usings and code block
-            for (var i = 0; i <= options.numEmptyLinesAfterUsings; i++) {
+            // Add only the requested number of lines, nothing more.
+            for (var i = 0; i < options.numEmptyLinesAfterUsings; i++) {
                 usings.push('');
             }
         }

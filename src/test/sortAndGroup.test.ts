@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { IFormatOptions, sortUsings, splitGroups } from '../formatting';
+import { IFormatOptions, sortUsings, splitGroups, USING_REGEX } from '../formatting';
 
 suite('Usings Tests', () => {
     const options: IFormatOptions = {
@@ -9,6 +9,22 @@ suite('Usings Tests', () => {
         numEmptyLinesAfterUsings: 0,
         numEmptyLinesBeforeUsings: 0,
     };
+
+    test('regex captures lines it should and excludes those it should not', () => {
+        const input = [
+            'using System;',
+            '// jlkjasfkljsakljsaf blah blah blah using this other thing...',
+            'using ILogger = Serilog.ILogger;',
+            'using (Foo xyz = new())',
+            'using Foo xyz = new();',
+        ];
+        const expected = [
+            'using System;',
+            'using ILogger = Serilog.ILogger;',
+        ];
+        var results = input.filter(line => USING_REGEX.test(line));
+        assert.deepEqual(results, expected);
+    });
 
     test('sortUsings should correctly sort using statements', () => {
         const input = [
