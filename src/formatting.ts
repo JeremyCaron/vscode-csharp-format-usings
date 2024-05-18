@@ -18,7 +18,7 @@ declare type Func<T, S> = (...args: S[]) => T;
 // this regex had to get a lot more complicated; it now requires the line it matches to end in a semicolon,
 // includes aliased usings and excludes things like comments that contain the word `using` and the using syntax for 
 // disposables (both with and without parens - really unfortunate overloading of the using keyword there C#...)
-export const USING_REGEX = /^(?!\/\/)(?!.*\/\*.*\*\/)\s*(using\s+(?!(\w+\s+)+\w+\s*=\s*)(\[.\w+\]|(\w+\s*=\s*)?\w+(\.\w+)*);\s*)+$/gm;
+export const USING_REGEX = /^(?!\/\/)(?!.*\/\*.*\*\/)\s*(using\s+(?!(\w+\s+)+\w+\s*=\s*)(\[.\w+\]|(\w+\s*=\s*)?\w+(\.\w+)*);\s*)+/gm;
 
 const replaceCode = (source: string, condition: RegExp, cb: Func<string, string>): string => {
     const flags = condition.flags.replace(/[gm]/g, '');
@@ -83,8 +83,7 @@ export function process(editor: vs.TextEditor, options: IFormatOptions): string 
 
         // if no using left, there is no need to insert extra empty lines
         if (usings.length > 0) {
-            // Add only the requested number of lines, nothing more.
-            for (var i = 0; i < options.numEmptyLinesAfterUsings; i++) {
+            for (var i = 0; i <= options.numEmptyLinesAfterUsings; i++) {
                 usings.push('');
             }
         }
