@@ -27,6 +27,8 @@ export async function getEdits(editor: vs.TextEditor, edit: vs.TextEditorEdit) {
         }
     }
     catch (ex) {
-        vs.window.showWarningMessage(ex);
+        let message = 'Unknown Error';
+        if (ex instanceof Error) message = ex.message;
+        vs.window.showWarningMessage(message);
     }
 };
