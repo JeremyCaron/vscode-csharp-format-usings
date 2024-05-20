@@ -2,8 +2,6 @@
 
 This extension helps organize C# using statements.  Updated with bug fixes for 2024.
 
-Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?itemName=gaoshan0621.csharp-format-usings) (an abandoned extension that was last modified on Aug 22, 2020), which was forked from [CSharpSortUsings](https://marketplace.visualstudio.com/items?itemName=jongrant.csharpsortusings).
-
 ## Features
 
 * Sorts usings in alphabetical order and removes duplicates.
@@ -11,13 +9,12 @@ Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?item
 * Removes unnecessary usings (enabled by default but can be disabled).
 * Offers multiple configurable settings for formatting the usings section, see "Extension Settings" below.
 
-## Bug Fixes
+## Version History
 
-* (v1.0.3) Properly handle aliased using directives, without breaking places that use "using [type] [variableName]" syntax.
+* (v1.0.3) Properly handle aliased using directives, without breaking places that use "using [type] [variableName] = whatever" syntax.  Added some very basic unit testing coverage.
 * (v1.0.2) Better fix for editor jumpiness per the recommendation at https://github.com/microsoft/vscode/issues/32058#issuecomment-322162175 to use TextEditorEdit.delete/insert instead of replace.
 * (v1.0.1) Fixed editor jumpiness when running "Organize Usings" on a file that needs no changes.
-* (v1.0.0) Now correctly removes unused usings when there are extra blank lines between namespace groups (this was previously causing the wrong lines to be removed from the source file).
-* (v1.0.0) Now correctly removes unused usings when ALL of a classes usings are unnecessary.
+* (v1.0.0) Now correctly removes unused usings when ALL of a classes usings are unnecessary & when there are extra blank lines between namespace groups (this was previously causing the wrong lines to be removed from the source file).
 
 ## Extension Settings
 
@@ -35,5 +32,9 @@ Use instructions from marketplace: [C# Organize Usings](https://marketplace.visu
 
 1. Install node.js.
 2. Run "npm install" from project folder.
-3. Run "npm run package" from project folder. Please make sure `vsce` is installed: `npm install -g vsce`.
+3. Run "vsce package" from project folder. Please make sure `vsce` is installed: `npm install -g vsce`.
 4. Install brand new packed *.vsix bundle through vscode plugins menu option "Install from VSIX".
+
+## History
+
+Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?itemName=gaoshan0621.csharp-format-usings) (an abandoned extension that was last modified on Aug 22, 2020) in 2024, which was forked from [CSharpSortUsings](https://marketplace.visualstudio.com/items?itemName=jongrant.csharpsortusings).
