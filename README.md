@@ -11,8 +11,9 @@ This extension helps organize C# using statements.  Updated with bug fixes for 2
 
 ## Version History
 
+* (v1.0.4) Handle IDE0005 flavor of "unused usings" diagnostics from Roslyn to enable compatibility with the C# extension when OmniSharp is disabled.
 * (v1.0.3) Properly handle aliased using directives, without breaking places that use "using [type] [variableName] = whatever" syntax.  Added some very basic unit testing coverage.
-* (v1.0.2) Better fix for editor jumpiness per the recommendation at https://github.com/microsoft/vscode/issues/32058#issuecomment-322162175 to use TextEditorEdit.delete/insert instead of replace.
+* (v1.0.2) Better fix for editor jumpiness per [Microsoft's recommendation](https://github.com/microsoft/vscode/issues/32058#issuecomment-322162175) to use TextEditorEdit.delete/insert instead of replace.
 * (v1.0.1) Fixed editor jumpiness when running "Organize Usings" on a file that needs no changes.
 * (v1.0.0) Now correctly removes unused usings when ALL of a classes usings are unnecessary & when there are extra blank lines between namespace groups (this was previously causing the wrong lines to be removed from the source file).
 
@@ -37,4 +38,4 @@ Use instructions from marketplace: [C# Organize Usings](https://marketplace.visu
 
 ## History
 
-Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?itemName=gaoshan0621.csharp-format-usings) (an abandoned extension that was last modified on Aug 22, 2020) in 2024, which was forked from [CSharpSortUsings](https://marketplace.visualstudio.com/items?itemName=jongrant.csharpsortusings).
+Forked from [CSharpFormatUsings](https://marketplace.visualstudio.com/items?itemName=gaoshan0621.csharp-format-usings) (an abandoned extension that was last modified on Aug 22, 2020) in 2024, which was forked from [CSharpSortUsings](https://marketplace.visualstudio.com/items?itemName=jongrant.csharpsortusings), which was forked from [CSharpFixFormat](https://github.com/umutozel/vscode-csharpfixformat).

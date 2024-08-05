@@ -97,10 +97,12 @@ export function process(editor: vs.TextEditor, options: IFormatOptions): string 
     return (content !== beforeContent) ? content : "";
 }
 
-export function removeUnncessaryUsings(editor: vs.TextEditor, usings: string[], firstUsingLine : number) {
+export function removeUnncessaryUsings(editor: vs.TextEditor, usings: string[], firstUsingLine: number) {
     const diagnostics = vs.languages.getDiagnostics(editor.document.uri);
     const unnecessaryUsingIndexs = diagnostics
-        .filter(diagnostic => diagnostic.source === 'csharp' && 'CS8019' === diagnostic.code?.toString())
+        .filter(diagnostic =>
+            (diagnostic.source === 'csharp' && 'CS8019' === diagnostic.code?.toString()) ||
+            (typeof diagnostic.code === 'object' && diagnostic.code !== null && 'value' in diagnostic.code && 'IDE0005' === diagnostic.code?.value))
         .map(diagnostic => diagnostic.range.start.line - firstUsingLine);
 
     if (unnecessaryUsingIndexs.length === 0) {
