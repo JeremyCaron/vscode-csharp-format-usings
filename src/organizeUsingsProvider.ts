@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { log } from "./logger"
 
 export class OrganizeUsingsProvider implements vscode.CodeActionProvider {
     public provideCodeActions(
@@ -7,6 +8,7 @@ export class OrganizeUsingsProvider implements vscode.CodeActionProvider {
         context: vscode.CodeActionContext,
         token: vscode.CancellationToken
     ): vscode.ProviderResult<vscode.CodeAction[]> {
+        log('provideCodeActions called for ' + document.uri.fsPath);
         const codeActions: vscode.CodeAction[] = [];
 
         // Create a code action to organize usings
