@@ -6,10 +6,10 @@
         "default": "icon-128.png"
     },
     "icon": "icon-256.png",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "publisher": "jeremycaron",
     "engines": {
-        "vscode": "^1.48.0"
+        "vscode": "^1.94.0"
     },
     "categories": [
         "Formatters",
@@ -31,6 +31,30 @@
             {
                 "command": "csharpOrganizeUsings.organize",
                 "title": "Organize Usings"
+            }
+        ],
+        "languages": [
+            {
+                "id": "csharp",
+                "aliases": [
+                    "C#",
+                    "csharp"
+                ],
+                "extensions": [
+                    ".cs"
+                ]
+            }
+        ],
+        "codeActions": [
+            {
+                "languages": [
+                    "csharp"
+                ],
+                "actions": {
+                    "kind": "source.organizeImports",
+                    "title": "Organize Usings",
+                    "command": "csharpOrganizeUsings.organize"
+                }
             }
         ],
         "menus": {
