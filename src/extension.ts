@@ -1,13 +1,13 @@
 import * as vs from "vscode";
 import { outputChannel, log } from "./logger";
-import * as provider from "./provider";
-import { OrganizeUsingsProvider } from "./organizeUsingsProvider";
+import * as formatting from "./formatting";
+import { CodeActionProvider } from "./codeActionProvider";
 
 export function activate(context: vs.ExtensionContext): void {
     // Register the CodeActionProvider for C# files
-    const organizeUsingsProvider = vs.languages.registerCodeActionsProvider(
+    const codeActionProvider = vs.languages.registerCodeActionsProvider(
         { language: "csharp", scheme: "file" },
-        new OrganizeUsingsProvider(),
+        new CodeActionProvider(),
         {
             providedCodeActionKinds: [vs.CodeActionKind.SourceOrganizeImports],
         }
@@ -15,10 +15,10 @@ export function activate(context: vs.ExtensionContext): void {
 
     var command = vs.commands.registerTextEditorCommand(
         "csharpOrganizeUsings.organize",
-        provider.getEdits
+        formatting.getEdits
     );
 
     log("Extension activated");
 
-    context.subscriptions.push(command, organizeUsingsProvider, outputChannel);
+    context.subscriptions.push(command, codeActionProvider, outputChannel);
 }

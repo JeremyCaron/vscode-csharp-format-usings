@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { log } from "./logger"
 
-export class OrganizeUsingsProvider implements vscode.CodeActionProvider {
+export class CodeActionProvider implements vscode.CodeActionProvider {
     public provideCodeActions(
         document: vscode.TextDocument,
         range: vscode.Range | vscode.Selection,
