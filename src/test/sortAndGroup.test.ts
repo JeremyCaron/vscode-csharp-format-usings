@@ -87,4 +87,99 @@ suite('Usings Tests', () => {
         splitGroups(input);
         assert.deepEqual(input, expected);
     });
+
+    test('sortUsings should handle empty input', () => {
+        const input: string[] = [];
+        sortUsings(input, options);
+        assert.deepEqual(input, []);
+    });
+
+    test('sortUsings should handle single using statement', () => {
+        const input = ['using System;'];
+        sortUsings(input, options);
+        assert.deepEqual(input, ['using System;']);
+    });
+
+    test('sortUsings should handle duplicate using statements', () => {
+        const input = [
+            'using System;',
+            'using Allocate.Common.Authorization.Enums;',
+            'using System;',
+            'using Allocate.Common.Comparison;',
+        ];
+        const expected = [
+            'using System;',
+            'using Allocate.Common.Authorization.Enums;',
+            'using Allocate.Common.Comparison;',
+        ];
+        sortUsings(input, options);
+        assert.deepEqual(input, expected);
+    });
+
+    test('splitGroups should handle empty input', () => {
+        const input: string[] = [];
+        splitGroups(input);
+        assert.deepEqual(input, []);
+    });
+
+    test('splitGroups should handle single using statement', () => {
+        const input = ['using System;'];
+        splitGroups(input);
+        assert.deepEqual(input, ['using System;']);
+    });
+
+    test('splitGroups should handle no groups', () => {
+        const input = [
+            'using Foo;',
+            'using Bar;',
+            'using Baz;',
+        ];
+        splitGroups(input);
+        assert.deepEqual(input, [
+            'using Foo;',
+            '',
+            'using Bar;',
+            '',
+            'using Baz;',
+        ]);
+    });
+
+    test('splitGroups should handle multiple groups', () => {
+        const input = [
+            'using System;',
+            'using Allocate.Common.Authorization.Enums;',
+            'using Allocate.Common.Comparison;',
+            'using Allocate.Common.Constants;',
+            'using AutoMapper;',
+            'using Microsoft.AspNetCore.Authorization;',
+            'using Microsoft.AspNetCore.Mvc;',
+            'using Foo = Serilog.Foo;',
+            'using ILogger = Serilog.ILogger;',
+            'using Allocate.Venture.Contracts.RequestModels;',
+            'using Allocate.Venture.Contracts.ResponseModels;',
+            'using Allocate.Venture.Contracts.ResponseModels.Teasers;',
+        ];
+        const expected = [
+            'using System;',
+            '',
+            'using Allocate.Common.Authorization.Enums;',
+            'using Allocate.Common.Comparison;',
+            'using Allocate.Common.Constants;',
+            'using Allocate.Venture.Contracts.RequestModels;',
+            'using Allocate.Venture.Contracts.ResponseModels;',
+            'using Allocate.Venture.Contracts.ResponseModels.Teasers;',
+            '',
+            'using AutoMapper;',
+            '',
+            'using Microsoft.AspNetCore.Authorization;',
+            'using Microsoft.AspNetCore.Mvc;',
+            '',
+            'using Foo = Serilog.Foo;',
+            'using ILogger = Serilog.ILogger;',
+        ];
+        sortUsings(input, options);
+        splitGroups(input);
+        assert.deepEqual(input, expected);
+    });
+
 });
