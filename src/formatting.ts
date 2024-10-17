@@ -172,24 +172,38 @@ export function sortUsings(usings: string[], options: IFormatOptions) {
 
     // Push the sorted nonAliases and aliases to the original usings array
     usings.push(...nonAliases, ...aliases);
+    removeDuplicates(usings);
 }
 
 export function splitGroups(usings: string[]) {
     let i = usings.length - 1;
     const baseNS = /\s*using\s+(\w+).*/;
     const aliasNS = /\s*using\s+\w+\s*=/;
-    let lastNS = usings[i--].replace(baseNS, '$1');
-    let nextNS: string;
+    if (usings.length > 1) {
+        let lastNS = usings[i--].replace(baseNS, '$1');
+        let nextNS: string;
 
-    for (; i >= 0; i--) {
-        if (aliasNS.test(usings[i])) {
-            continue;
-        }
+        for (; i >= 0; i--) {
+            if (aliasNS.test(usings[i])) {
+                continue;
+            }
 
-        nextNS = usings[i].replace(baseNS, '$1');
-        if (nextNS !== lastNS) {
-            lastNS = nextNS;
-            usings.splice(i + 1, 0, '');
+            nextNS = usings[i].replace(baseNS, '$1');
+            if (nextNS !== lastNS) {
+                lastNS = nextNS;
+                usings.splice(i + 1, 0, '');
+            }
         }
     }
+}
+
+export function removeDuplicates(usings: string[]) {
+    const uniqueUsings: string[] = [];  
+    for (const using of usings) {
+        if (!uniqueUsings.includes(using)) {
+            uniqueUsings.push(using);
+        }
+    }
+    usings.length = 0;
+    usings.push(...uniqueUsings);
 }
