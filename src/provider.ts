@@ -1,4 +1,5 @@
 import * as vs from 'vscode';
+import { log } from "./logger";
 import * as formatting from './formatting';
 
 const getFormatOptions = (): formatting.IFormatOptions => {
@@ -14,6 +15,7 @@ const getFormatOptions = (): formatting.IFormatOptions => {
 };
 
 export async function getEdits(editor: vs.TextEditor, edit: vs.TextEditorEdit) {
+    log("Extension executed!!");
     var options = getFormatOptions();
 
     try {
