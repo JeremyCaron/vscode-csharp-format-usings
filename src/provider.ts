@@ -21,11 +21,9 @@ export async function getEdits(editor: vs.TextEditor, edit: vs.TextEditorEdit) {
     try {
         var result = formatting.process(editor, options);
         if (result) {
-            const range = new vs.Range(
-                new vs.Position(0, 0), editor.document.lineAt(editor.document.lineCount - 1).range.end);
+            const range = new vs.Range(new vs.Position(0, 0), editor.document.lineAt(editor.document.lineCount - 1).range.end);
             edit.delete(range);
             edit.insert(new vs.Position(0, 0), result);
-            // edit.replace(range, result);
         }
     }
     catch (ex) {
