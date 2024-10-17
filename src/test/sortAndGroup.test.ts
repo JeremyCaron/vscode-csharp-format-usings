@@ -47,6 +47,30 @@ suite('Usings Tests', () => {
         assert.deepEqual(input, expected);
     });
 
+    test('sortUsings should remove duplicates', () => {
+        const input = [
+            'using System;',
+            'using Allocate.Common.Authorization.Enums;',
+            'using Foo = Serilog.Foo;',
+            'using Allocate.Common.Comparison;',
+            'using ILogger = Serilog.ILogger;',
+            'using Microsoft.AspNetCore.Mvc;',
+            'using ILogger = Serilog.ILogger;',
+            'using Allocate.Common.Authorization.Enums;',
+            'using System;',
+        ];
+        const expected = [
+            'using System;',
+            'using Allocate.Common.Authorization.Enums;',
+            'using Allocate.Common.Comparison;',
+            'using Microsoft.AspNetCore.Mvc;',
+            'using Foo = Serilog.Foo;',
+            'using ILogger = Serilog.ILogger;',
+        ];
+        sortUsings(input, options);
+        assert.deepEqual(input, expected);
+    });
+
     test('splitGroups should correctly group using statements', () => {
         const input = [
             'using System;',
