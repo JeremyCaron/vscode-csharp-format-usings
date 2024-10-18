@@ -36,17 +36,17 @@ suite('Usings Tests', () =>
     {
         const input = [
             'using System;',
-            'using Allocate.Common.Authorization.Enums;',
+            'using AwesomeCompany.Common.Authorization.Enums;',
             'using Foo = Serilog.Foo;',
-            'using Allocate.Common.Comparison;',
+            'using AwesomeCompany.Common.Comparison;',
             'using ILogger = Serilog.ILogger;',
             'using Microsoft.AspNetCore.Mvc;',
         ];
 
         const expected = [
             'using System;',
-            'using Allocate.Common.Authorization.Enums;',
-            'using Allocate.Common.Comparison;',
+            'using AwesomeCompany.Common.Authorization.Enums;',
+            'using AwesomeCompany.Common.Comparison;',
             'using Microsoft.AspNetCore.Mvc;',
             'using Foo = Serilog.Foo;',
             'using ILogger = Serilog.ILogger;',
@@ -60,20 +60,20 @@ suite('Usings Tests', () =>
     {
         const input = [
             'using System;',
-            'using Allocate.Common.Authorization.Enums;',
+            'using AwesomeCompany.Common.Authorization.Enums;',
             'using Foo = Serilog.Foo;',
-            'using Allocate.Common.Comparison;',
+            'using AwesomeCompany.Common.Comparison;',
             'using ILogger = Serilog.ILogger;',
             'using Microsoft.AspNetCore.Mvc;',
             'using ILogger = Serilog.ILogger;',
-            'using Allocate.Common.Authorization.Enums;',
+            'using AwesomeCompany.Common.Authorization.Enums;',
             'using System;',
         ];
 
         const expected = [
             'using System;',
-            'using Allocate.Common.Authorization.Enums;',
-            'using Allocate.Common.Comparison;',
+            'using AwesomeCompany.Common.Authorization.Enums;',
+            'using AwesomeCompany.Common.Comparison;',
             'using Microsoft.AspNetCore.Mvc;',
             'using Foo = Serilog.Foo;',
             'using ILogger = Serilog.ILogger;',
@@ -87,14 +87,14 @@ suite('Usings Tests', () =>
     {        
         const input = [
             'using System;',
-            'using Allocate.Common.Authorization.Enums;',
-            'using Allocate.Common.Comparison;',
-            'using Allocate.Common.Constants;',
-            'using Allocate.Common.Database.Services;',
-            'using Allocate.Users.ServiceClient;',
-            'using Allocate.Venture.Contracts.RequestModels;',
-            'using Allocate.Venture.Contracts.ResponseModels;',
-            'using Allocate.Venture.Contracts.ResponseModels.Teasers;',
+            'using AwesomeCompany.Common.Authorization.Enums;',
+            'using AwesomeCompany.Common.Comparison;',
+            'using AwesomeCompany.Common.Constants;',
+            'using AwesomeCompany.Common.Database.Services;',
+            'using AwesomeCompany.Users.ServiceClient;',
+            'using AwesomeCompany.Venture.Contracts.RequestModels;',
+            'using AwesomeCompany.Venture.Contracts.ResponseModels;',
+            'using AwesomeCompany.Venture.Contracts.ResponseModels.Teasers;',
             'using AutoMapper;',
             'using Microsoft.AspNetCore.Authorization;',
             'using Microsoft.AspNetCore.Mvc;',
@@ -105,14 +105,14 @@ suite('Usings Tests', () =>
         const expected = [
             'using System;',
             '',
-            'using Allocate.Common.Authorization.Enums;',
-            'using Allocate.Common.Comparison;',
-            'using Allocate.Common.Constants;',
-            'using Allocate.Common.Database.Services;',
-            'using Allocate.Users.ServiceClient;',
-            'using Allocate.Venture.Contracts.RequestModels;',
-            'using Allocate.Venture.Contracts.ResponseModels;',
-            'using Allocate.Venture.Contracts.ResponseModels.Teasers;',
+            'using AwesomeCompany.Common.Authorization.Enums;',
+            'using AwesomeCompany.Common.Comparison;',
+            'using AwesomeCompany.Common.Constants;',
+            'using AwesomeCompany.Common.Database.Services;',
+            'using AwesomeCompany.Users.ServiceClient;',
+            'using AwesomeCompany.Venture.Contracts.RequestModels;',
+            'using AwesomeCompany.Venture.Contracts.ResponseModels;',
+            'using AwesomeCompany.Venture.Contracts.ResponseModels.Teasers;',
             '',
             'using AutoMapper;',
             '',
@@ -145,15 +145,15 @@ suite('Usings Tests', () =>
     {        
         const input = [
             'using System;',
-            'using Allocate.Common.Authorization.Enums;',
+            'using AwesomeCompany.Common.Authorization.Enums;',
             'using System;',
-            'using Allocate.Common.Comparison;',
+            'using AwesomeCompany.Common.Comparison;',
         ];
 
         const expected = [
             'using System;',
-            'using Allocate.Common.Authorization.Enums;',
-            'using Allocate.Common.Comparison;',
+            'using AwesomeCompany.Common.Authorization.Enums;',
+            'using AwesomeCompany.Common.Comparison;',
         ];
 
         sortUsings(input, options);
@@ -197,30 +197,30 @@ suite('Usings Tests', () =>
     {
         const input = [
             'using System;',
-            'using Allocate.Common.Authorization.Enums;',
-            'using Allocate.Common.Comparison;',
-            'using Allocate.Common.Constants;',
+            'using AwesomeCompany.Common.Authorization.Enums;',
+            'using AwesomeCompany.Common.Comparison;',
+            'using AwesomeCompany.Common.Constants;',
             'using AutoMapper;',
             'using Microsoft.AspNetCore.Authorization;',
             'using Microsoft.AspNetCore.Mvc;',
             'using Foo = Serilog.Foo;',
             'using ILogger = Serilog.ILogger;',
-            'using Allocate.Venture.Contracts.RequestModels;',
-            'using Allocate.Venture.Contracts.ResponseModels;',
-            'using Allocate.Venture.Contracts.ResponseModels.Teasers;',
+            'using AwesomeCompany.Venture.Contracts.RequestModels;',
+            'using AwesomeCompany.Venture.Contracts.ResponseModels;',
+            'using AwesomeCompany.Venture.Contracts.ResponseModels.Teasers;',
         ];
 
         const expected = [
             'using System;',
             '',
-            'using Allocate.Common.Authorization.Enums;',
-            'using Allocate.Common.Comparison;',
-            'using Allocate.Common.Constants;',
-            'using Allocate.Venture.Contracts.RequestModels;',
-            'using Allocate.Venture.Contracts.ResponseModels;',
-            'using Allocate.Venture.Contracts.ResponseModels.Teasers;',
-            '',
             'using AutoMapper;',
+            '',
+            'using AwesomeCompany.Common.Authorization.Enums;',
+            'using AwesomeCompany.Common.Comparison;',
+            'using AwesomeCompany.Common.Constants;',
+            'using AwesomeCompany.Venture.Contracts.RequestModels;',
+            'using AwesomeCompany.Venture.Contracts.ResponseModels;',
+            'using AwesomeCompany.Venture.Contracts.ResponseModels.Teasers;',
             '',
             'using Microsoft.AspNetCore.Authorization;',
             'using Microsoft.AspNetCore.Mvc;',
