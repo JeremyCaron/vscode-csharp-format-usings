@@ -6,7 +6,7 @@ This extension helps organize C# `using` statements and is meant to replicate th
 
 - Removes unnecessary `using` directives (enabled by default but can be disabled) and duplicates.
 - Sorts `using` directives in alphabetical order and into groups by the first level of the namespace.
-- Can be triggered on save, via the context menu, or with the `Organize C# Usings` command in the Command Palette.
+- Can be triggered on save, via the right-click menu in the editor, or with the `Organize C# Usings` command in the Command Palette (can also be setup as a keyboard shortcut).
 - Inserts a configurable number of empty lines between sets of sorted using statements.
 - Offers multiple configurable settings for formatting the `using` section (see "Extension Settings" below).
 
