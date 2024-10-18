@@ -1,7 +1,7 @@
 {
     "name": "csharp-organize-usings",
     "displayName": "C# Organize Usings",
-    "description": "Keeps your C# using statements free of unnecessary references and sorted how you choose.",
+    "description": "Keeps your C# using statements free of unnecessary references and sorted the way you choose.",
     "icons": {
         "default": "icon-128.png"
     },
@@ -30,7 +30,7 @@
         "commands": [
             {
                 "command": "csharpOrganizeUsings.organize",
-                "title": "Organize Usings"
+                "title": "Organize C# Usings"
             }
         ],
         "languages": [
@@ -52,7 +52,7 @@
                 ],
                 "actions": {
                     "kind": "source.organizeImports",
-                    "title": "Organize Usings",
+                    "title": "Organize C# Usings",
                     "command": "csharpOrganizeUsings.organize"
                 }
             }
@@ -71,7 +71,7 @@
             "properties": {
                 "csharpOrganizeUsings.sortOrder": {
                     "type": "string",
-                    "default": "System Microsoft",
+                    "default": "System",
                     "description": "Put namespaces in proper order. Values should be split with space."
                 },
                 "csharpOrganizeUsings.splitGroups": {
