@@ -34,7 +34,7 @@ suite('removeUnnecessaryUsings', () => {
                 range: new vs.Range(new vs.Position(0, 0), new vs.Position(0, 1))
             },
             {
-                code: 'IDE0005',
+                code: {value: 'IDE0005', target: vs.Uri.parse("null")},
                 source: 'roslyn',
                 message: 'Using directive is unnecessary.',
                 severity: vs.DiagnosticSeverity.Warning,
@@ -48,7 +48,7 @@ suite('removeUnnecessaryUsings', () => {
                 range: new vs.Range(new vs.Position(6, 0), new vs.Position(6, 1))
             },
             {
-                code: 'IDE0005',
+                code: {value: 'CS8019', target: vs.Uri.parse("null")},
                 source: 'roslyn',
                 message: 'Using directive is unnecessary.',
                 severity: vs.DiagnosticSeverity.Warning,
@@ -57,7 +57,6 @@ suite('removeUnnecessaryUsings', () => {
         ];
 
         const expected = [
-            '',
             '',
             'using AwesomeCompany.Common.Authorization.Enums;',
             'using AwesomeCompany.Common.Comparison;',
