@@ -34,7 +34,7 @@ export function removeUnncessaryUsings(diagnostics: vs.Diagnostic[], usings: str
 {
     const unnecessaryUsingIndexs = diagnostics
         .filter(diagnostic =>
-            (diagnostic.source === 'csharp' && 'CS8019' === diagnostic.code?.toString()) || // omnisharp style
+            (diagnostic.source === 'csharp' && diagnostic.code?.toString() === 'CS8019') || // omnisharp style
             (typeof diagnostic.code === 'object' && diagnostic.code !== null && 'value' in diagnostic.code && (diagnostic.code?.value === 'IDE0005' || diagnostic.code?.value === 'CS8019'))) // roslyn style
         .map(diagnostic => diagnostic.range.start.line - firstUsingLine);
 
