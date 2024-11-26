@@ -32,39 +32,29 @@ export async function organizeUsingsInEditor(editor: vs.TextEditor, edit: vs.Tex
 
 export function removeUnnecessaryUsings(diagnostics: vs.Diagnostic[], usings: string[], firstUsingLine: number) 
 {
-    const relevantDiagnostics = diagnostics.filter(diagnostic => isOmniSharpUnnecessaryUsing(diagnostic) || isRoslynUnnecessaryUsing(diagnostic));
-    const unnecessaryUsingIndexes = new Set<number>();
-
-    relevantDiagnostics.forEach((diag, index) => 
-    {
-        var lineNums = getLineNumbersFromDiagnostic(diag);
-
-        // There's probably cleaner syntax for this...
-        lineNums.forEach((lineNum, idx) =>
-        {
-            unnecessaryUsingIndexes.add(lineNum);
-        })
-    });
+    const unnecessaryUsingIndexes = new Set(
+        diagnostics.filter(diagnostic => isOmniSharpUnnecessaryUsing(diagnostic) || isRoslynUnnecessaryUsing(diagnostic))
+            .flatMap(diagnostic => getLineNumbersFromDiagnostic(diagnostic)));
 
     if (unnecessaryUsingIndexes.size === 0)
     {
         return;
     }
-
-    for (let i = usings.length - 1; i >= 0; i--) 
-    {
-        if (unnecessaryUsingIndexes.has(i))
-        {
-            usings.splice(i, 1);
-        }
-    }
+    
+    // Filter out the unnecessary usings by their index
+    const filteredUsings = usings.filter((_, index) => !unnecessaryUsingIndexes.has(index));
+    
+    // Update the original 'usings' array
+    usings.length = 0;
+    usings.push(...filteredUsings);
 
     function getLineNumbersFromDiagnostic(diagnostic: vs.Diagnostic): number[] 
     {
-        const result = [];
+        const { start, end } = diagnostic.range;
+        const result: number[] = [];
         if (diagnostic.range.start.line !== diagnostic.range.end.line)
         {
-            for (let i = diagnostic.range.start.line; i <= diagnostic.range.end.line; i++) 
+            for (let i = start.line; i <= end.line; i++)
             {
                 result.push(i);
             }
@@ -75,14 +65,16 @@ export function removeUnnecessaryUsings(diagnostics: vs.Diagnostic[], usings: st
     }
 }
 
-function isRoslynUnnecessaryUsing(diagnostic: vs.Diagnostic): unknown {
+function isRoslynUnnecessaryUsing(diagnostic: vs.Diagnostic): unknown 
+{
     return typeof diagnostic.code === 'object'
         && diagnostic.code !== null
         && 'value' in diagnostic.code
         && (diagnostic.code?.value === 'IDE0005' || diagnostic.code?.value === 'CS8019');
 }
 
-function isOmniSharpUnnecessaryUsing(diagnostic: vs.Diagnostic): unknown {
+function isOmniSharpUnnecessaryUsing(diagnostic: vs.Diagnostic): unknown 
+{
     return diagnostic.source === 'csharp' && diagnostic.code?.toString() === 'CS8019';
 }
 
