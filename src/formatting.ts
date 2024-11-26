@@ -30,26 +30,60 @@ export async function organizeUsingsInEditor(editor: vs.TextEditor, edit: vs.Tex
     }
 };
 
-export function removeUnncessaryUsings(diagnostics: vs.Diagnostic[], usings: string[], firstUsingLine: number) 
+export function removeUnnecessaryUsings(diagnostics: vs.Diagnostic[], usings: string[], firstUsingLine: number) 
 {
-    const unnecessaryUsingIndexs = diagnostics
-        .filter(diagnostic =>
-            (diagnostic.source === 'csharp' && diagnostic.code?.toString() === 'CS8019') || // omnisharp style
-            (typeof diagnostic.code === 'object' && diagnostic.code !== null && 'value' in diagnostic.code && (diagnostic.code?.value === 'IDE0005' || diagnostic.code?.value === 'CS8019'))) // roslyn style
-        .map(diagnostic => diagnostic.range.start.line - firstUsingLine);
+    const relevantDiagnostics = diagnostics.filter(diagnostic => isOmniSharpUnnecessaryUsing(diagnostic) || isRoslynUnnecessaryUsing(diagnostic));
+    const unnecessaryUsingIndexes = new Set<number>();
 
-    if (unnecessaryUsingIndexs.length === 0) 
+    relevantDiagnostics.forEach((diag, index) => 
+    {
+        var lineNums = getLineNumbersFromDiagnostic(diag);
+
+        // There's probably cleaner syntax for this...
+        lineNums.forEach((lineNum, idx) =>
+        {
+            unnecessaryUsingIndexes.add(lineNum);
+        })
+    });
+
+    if (unnecessaryUsingIndexes.size === 0)
     {
         return;
     }
 
     for (let i = usings.length - 1; i >= 0; i--) 
     {
-        if (unnecessaryUsingIndexs.includes(i)) 
+        if (unnecessaryUsingIndexes.has(i))
         {
             usings.splice(i, 1);
         }
     }
+
+    function getLineNumbersFromDiagnostic(diagnostic: vs.Diagnostic): number[] 
+    {
+        const result = [];
+        if (diagnostic.range.start.line !== diagnostic.range.end.line)
+        {
+            for (let i = diagnostic.range.start.line; i <= diagnostic.range.end.line; i++) 
+            {
+                result.push(i);
+            }
+            return result;
+        }
+
+        return [diagnostic.range.start.line - firstUsingLine];
+    }
+}
+
+function isRoslynUnnecessaryUsing(diagnostic: vs.Diagnostic): unknown {
+    return typeof diagnostic.code === 'object'
+        && diagnostic.code !== null
+        && 'value' in diagnostic.code
+        && (diagnostic.code?.value === 'IDE0005' || diagnostic.code?.value === 'CS8019');
+}
+
+function isOmniSharpUnnecessaryUsing(diagnostic: vs.Diagnostic): unknown {
+    return diagnostic.source === 'csharp' && diagnostic.code?.toString() === 'CS8019';
 }
 
 export function sortUsings(usings: string[], options: IFormatOptions) 
@@ -167,7 +201,7 @@ export function removeDuplicates(usings: string[])
 function processEditorContent(editor: vs.TextEditor, options: IFormatOptions): string 
 {
     const beforeContent = editor.document.getText();
-    const endOfline = editor.document.eol === vs.EndOfLine.LF ? '\n' : '\r\n';    
+    const endOfline = editor.document.eol === vs.EndOfLine.LF ? '\n' : '\r\n';
     const diagnostics = vs.languages.getDiagnostics(editor.document.uri);
 
     return processSourceCode(beforeContent, endOfline, options, diagnostics);
@@ -187,7 +221,7 @@ function processSourceCode(sourceCodeText: string, endOfline: string, options: I
 
         if (options.removeUnnecessaryUsings)
         {
-            removeUnncessaryUsings(diagnostics, usings, firstUsingLine);
+            removeUnnecessaryUsings(diagnostics, usings, firstUsingLine);
         }
 
         usings = usings.filter(using => using.length > 0);

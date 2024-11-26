@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import { removeUnncessaryUsings } from '../formatting';
-import * as vs from 'vscode'; // Assuming you have vscode as a dev dependency
+import { removeUnnecessaryUsings } from '../formatting';
+import * as vs from 'vscode';
 
 suite('removeUnnecessaryUsings', () => {
     test('should remove unused usings based on diagnostics', () => {
@@ -74,7 +74,53 @@ suite('removeUnnecessaryUsings', () => {
         ];
 
         const firstUsingLine = 0;
-        removeUnncessaryUsings(diagnostics, input, firstUsingLine);
+        removeUnnecessaryUsings(diagnostics, input, firstUsingLine);
+        assert.deepEqual(input, expected);
+    });
+
+
+    test('should remove unused usings based on diagnostics across groups', () => {
+        const input = [
+            'using System;',
+            'using System.Collections;',
+            'using System.Buffers;',
+            'using System.Runtime.CompilerServices;',
+            'using System.CodeDom;',
+            '',
+            'using Microsoft.CodeAnalysis;'
+        ];
+
+        const diagnostics: vs.Diagnostic[] = [
+            {
+                code: 'CS8019',
+                source: 'csharp',
+                message: 'Using directive is unnecessary.',
+                severity: vs.DiagnosticSeverity.Warning,
+                range: new vs.Range(new vs.Position(0, 0), new vs.Position(0, 1))
+            },
+            {
+                code: {value: 'IDE0005', target: vs.Uri.parse("null")},
+                source: 'roslyn',
+                message: 'Using directive is unnecessary.',
+                severity: vs.DiagnosticSeverity.Warning,
+                range: new vs.Range(new vs.Position(2, 0), new vs.Position(2, 1))
+            },
+            {
+                code: 'CS8019',
+                source: 'csharp',
+                message: 'Using directive is unnecessary.',
+                severity: vs.DiagnosticSeverity.Warning,
+                range: new vs.Range(new vs.Position(4, 0), new vs.Position(6, 1))
+            }
+        ];
+
+        const expected = [
+            'using System.Collections;',
+            'using System.Runtime.CompilerServices;'
+        ];
+
+        const firstUsingLine = 0;
+        removeUnnecessaryUsings(diagnostics, input, firstUsingLine);
         assert.deepEqual(input, expected);
     });
 });
