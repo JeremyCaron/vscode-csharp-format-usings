@@ -3,7 +3,8 @@ import { removeUnnecessaryUsings } from '../formatting';
 import * as vs from 'vscode';
 
 suite('removeUnnecessaryUsings', () => {
-    test('should remove unused usings based on diagnostics', () => {
+
+    test('should remove unused usings based on single-line Diagnostics', () => {
         const input = [
             'using System;',
             '',
@@ -78,8 +79,7 @@ suite('removeUnnecessaryUsings', () => {
         assert.deepEqual(input, expected);
     });
 
-
-    test('should remove unused usings based on diagnostics across groups', () => {
+    test('should remove unused usings on multiple lines from a single Diagnostic range', () => {
         const input = [
             'using System;',
             'using System.Collections;',
