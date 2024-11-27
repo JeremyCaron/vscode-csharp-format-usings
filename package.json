@@ -6,7 +6,7 @@
         "default": "icon-128.png"
     },
     "icon": "icon-256.png",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "publisher": "jeremycaron",
     "engines": {
         "vscode": "^1.94.0"
