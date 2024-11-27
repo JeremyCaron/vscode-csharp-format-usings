@@ -1,6 +1,6 @@
 # C# Organize Usings for Visual Studio Code
 
-This extension helps organize C# `using` statements and is meant to replicate the sorting and cleanup behavior you may be familiar with from Visual Studio. It is an actively-supported, forked version of the abandoned [CSharpFormatUsings](https://marketplace.visualstudio.com/items?itemName=gaoshan0621.csharp-format-usings) extension, featuring bug fixes and new functionality. It works with either OmniSharp or Roslyn as the backend for the C# extension.
+This extension helps organize C# `using` statements and is meant to replicate the sorting and cleanup behavior you may be familiar with from Visual Studio. It is an actively-supported, forked version of the abandoned [CSharpFormatUsings](https://marketplace.visualstudio.com/items?itemName=gaoshan0621.csharp-format-usings) extension that offers bug fixes, new features, and compatibility with the OmniSharp, Roslyn, and C# Dev Kit Language Servers.
 
 ## Features
 
