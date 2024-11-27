@@ -17,7 +17,7 @@ suite('Usings Tests', () =>
     {
         const input = [
             'using System;',
-            '// jlkjasfkljsakljsaf blah blah blah using this other thing...',
+            '// blah blah blah using this other thing...',
             'using ILogger = Serilog.ILogger;',
             'using (Foo xyz = new())',
             'using Foo xyz = new();',

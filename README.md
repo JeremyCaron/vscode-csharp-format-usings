@@ -1,6 +1,6 @@
 # C# Organize Usings for Visual Studio Code
 
-This extension helps organize C# `using` statements and is meant to replicate the sorting and cleanup behavior you may be familiar with from Visual Studio. It is an actively-supported, forked version of the abandoned [CSharpFormatUsings](https://marketplace.visualstudio.com/items?itemName=gaoshan0621.csharp-format-usings) extension, featuring bug fixes and new functionality. It works with either OmniSharp or Roslyn as the backend for the C# extension.
+This extension helps organize C# `using` statements and is meant to replicate the sorting and cleanup behavior you may be familiar with from Visual Studio. It is an actively-supported, forked version of the abandoned [CSharpFormatUsings](https://marketplace.visualstudio.com/items?itemName=gaoshan0621.csharp-format-usings) extension that offers bug fixes, new features, and compatibility with the OmniSharp, Roslyn, and C# Dev Kit Language Servers.
 
 ## Features
 
@@ -12,10 +12,11 @@ This extension helps organize C# `using` statements and is meant to replicate th
 
 ## Version History
 
+- **1.0.6**: Fixed a bug that would prevent all unused usings from being removed on the first execution of the "Organize C# Usings" command.  The line numbers returned by vs.languages.getDiagnostics were being misinterpreted.  New unit tests around the removal of unused usings.
 - **1.0.5**: Adds support for running natively on save, improved handling of duplicate removal during cleanup, an output panel channel for debug output, and various improvements in source code.
 - **1.0.4**: Handles IDE0005 diagnostics for unused usings from Roslyn, enabling compatibility with the C# extension when OmniSharp is disabled.
 - **1.0.3**: Properly handles aliased `using` directives without breaking syntax such as `using [type] [variableName] = whatever`. Adds basic unit test coverage.
-- **1.0.2**: Fixes editor jumpiness based on [Microsoft's recommendation](https://github.com/microsoft/vscode/issues/32058#issuecomment-322162175) to use `TextEditorEdit.delete/insert` instead of `repace`.
+- **1.0.2**: Fixes editor jumpiness based on [Microsoft's recommendation](https://github.com/microsoft/vscode/issues/32058#issuecomment-322162175) to use `TextEditorEdit.delete/insert` instead of `replace`.
 - **1.0.1**: Fixed editor jumpiness when running "Organize Usings" on files that require no changes.
 - **1.0.0**: Correctly removes unused usings when **all** of a class's usings are unnecessary, and resolves issues caused by extra blank lines between namespace groups.
 
