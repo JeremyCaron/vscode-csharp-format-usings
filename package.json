@@ -93,6 +93,11 @@
                     "type": "number",
                     "default": 1,
                     "description": "The maximum number of empty lines before using statements if there are characters, like comments, before usings."
+                },
+                "csharpOrganizeUsings.processUsingsInPreprocessorDirectives": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Should usings withing preprocessing directives be processed, defaults to false."
                 }
             }
         }
@@ -141,7 +146,6 @@
         "url": "https://github.com/JeremyCaron/vscode-csharp-organize-usings/issues"
     },
     "dependencies": {
-        "inflight": "^1.0.6",
         "watch": "^1.0.2"
     }
 }

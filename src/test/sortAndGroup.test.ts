@@ -11,6 +11,7 @@ suite('Usings Tests', () =>
         removeUnnecessaryUsings: false,
         numEmptyLinesAfterUsings: 0,
         numEmptyLinesBeforeUsings: 0,
+        processUsingsInPreprocessorDirectives: false
     };
 
     test('regex captures lines it should and excludes those it should not', () => 

@@ -7,7 +7,7 @@ import { IFormatOptions } from './interfaces/IFormatOptions';
 // disposables (both with and without parens - really unfortunate overloading of the using keyword there C#...)
 export const USING_REGEX = /^(?!\/\/)(?!.*\/\*.*\*\/)\s*(using\s+(?!(\w+\s+)+\w+\s*=\s*)(\[.\w+\]|(\w+\s*=\s*)?\w+(\.\w+)*);\s*)+/gm;
 
-export async function organizeUsingsInEditor(editor: vs.TextEditor, edit: vs.TextEditorEdit) 
+export async function organizeUsingsInEditor(editor: vs.TextEditor, edit: vs.TextEditorEdit)
 {
     logToOutputChannel("`Organize C# Usings` command executed");
     var options = getDefaultFormatOptions();
@@ -30,9 +30,9 @@ export async function organizeUsingsInEditor(editor: vs.TextEditor, edit: vs.Tex
     }
 };
 
-export function removeUnnecessaryUsings(diagnostics: vs.Diagnostic[], usings: string[], firstUsingLine: number) 
+export function removeUnnecessaryUsings(diagnostics: vs.Diagnostic[], usings: string[], processUsingsInPreprocessorDirectives: boolean = false) 
 {
-    const unnecessaryUsingIndexes = new Set(
+    var unnecessaryUsingIndexes = new Set(
         diagnostics.filter(diagnostic => isOmniSharpUnnecessaryUsing(diagnostic) || isRoslynUnnecessaryUsing(diagnostic))
             .flatMap(diagnostic => getLineNumbersFromDiagnostic(diagnostic)));
 
@@ -40,7 +40,16 @@ export function removeUnnecessaryUsings(diagnostics: vs.Diagnostic[], usings: st
     {
         return;
     }
-    
+
+    if (!processUsingsInPreprocessorDirectives)
+    {
+        var preprocessorRanges = findPreprocessorRanges(usings);
+        // if we aren't supposed to process usings within preprocessor directives, remove those 
+        // from the list of unnecessaryUsingIndexes.
+        unnecessaryUsingIndexes = 
+            new Set(Array.from(unnecessaryUsingIndexes).filter((index) => !indexIsContainedByPreprocessorDirective(index, preprocessorRanges)));
+    }
+
     // Filter out the unnecessary usings by their index
     const filteredUsings = usings.filter((_, index) => !unnecessaryUsingIndexes.has(index));
     
@@ -61,7 +70,49 @@ export function removeUnnecessaryUsings(diagnostics: vs.Diagnostic[], usings: st
             return result;
         }
 
-        return [diagnostic.range.start.line - firstUsingLine];
+        return [diagnostic.range.start.line];
+    }
+
+    function indexIsContainedByPreprocessorDirective(index: number, ranges: Array<vs.Range>): boolean {
+        var result = false;
+
+        for (const range of ranges) {
+            if (index >= range.start.line && index <= range.end.line) {
+                result = true;
+                break; 
+            }
+        }
+
+        return result;
+    }
+
+    function findPreprocessorRanges(usings: string[]): Array<vs.Range> {
+        const result: vs.Range[] = [];
+        let stack: number[] = [];
+    
+        // Iterate through the `usings` array to find the #if and #endif pairs
+        for (let lineIndex = 0; lineIndex < usings.length; lineIndex++) {
+            const line = usings[lineIndex].trim();
+    
+            // If the line contains #if directive, push its index to the stack
+            if (line.startsWith('#if')) {
+                stack.push(lineIndex);
+            }
+    
+            // If the line contains #endif directive, pop the last index from the stack
+            else if (line.startsWith('#endif') && stack.length > 0) {
+                const startLine = stack.pop();
+                if (startLine !== undefined) {
+                    // Create a Range for the pair of lines (#if to #endif)
+                    const startPosition = new vs.Position(startLine, 0);
+                    const endPosition = new vs.Position(lineIndex, 0);
+    
+                    result.push(new vs.Range(startPosition, endPosition));
+                }
+            }
+        }
+    
+        return result;
     }
 }
 
@@ -203,17 +254,17 @@ function processSourceCode(sourceCodeText: string, endOfline: string, options: I
 {
     var content = sourceCodeText;
     const firstUsing = content.search(/using\s+[.\w]+;/);
-    const firstUsingLine = content.substring(0, firstUsing).split(endOfline).length - 1;
 
     content = replaceCode(content, rawBlock =>
     {
-        const lines = rawBlock.split(endOfline).map(l => l?.trim() ?? ''); // remove heading and trailing whitespaces
+        // remove leading and trailing whitespace
+        const lines = rawBlock.split(endOfline).map(l => l?.trim() ?? ''); 
 
-        var usings = lines; // .filter(l => l.length > 0);
+        var usings = lines;
 
         if (options.removeUnnecessaryUsings)
         {
-            removeUnnecessaryUsings(diagnostics, usings, firstUsingLine);
+            removeUnnecessaryUsings(diagnostics, usings, options.processUsingsInPreprocessorDirectives);
         }
 
         usings = usings.filter(using => using.length > 0);
@@ -283,6 +334,7 @@ function getDefaultFormatOptions(): IFormatOptions
         removeUnnecessaryUsings: cfg.get<boolean>('removeUnnecessaryUsings', true),
         numEmptyLinesAfterUsings: cfg.get<number>('numEmptyLinesAfterUsings', 1),
         numEmptyLinesBeforeUsings: cfg.get<number>('numEmptyLinesBeforeUsings', 1),
+        processUsingsInPreprocessorDirectives: cfg.get<boolean>('processUsingsInPreprocessorDirectives', false),
     };
 }
 

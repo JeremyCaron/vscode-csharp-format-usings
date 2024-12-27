@@ -1,8 +1,9 @@
 export interface IFormatOptions
 {
-    sortOrder: string;
-    splitGroups: boolean;
-    removeUnnecessaryUsings: boolean;
     numEmptyLinesAfterUsings: number;
     numEmptyLinesBeforeUsings: number;
+    processUsingsInPreprocessorDirectives: boolean;
+    removeUnnecessaryUsings: boolean;
+    sortOrder: string;
+    splitGroups: boolean;
 }
