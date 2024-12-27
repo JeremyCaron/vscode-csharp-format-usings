@@ -21,10 +21,7 @@
         "onStartupFinished",
         "onLanguage:csharp"
     ],
-    "author": {
-        "name": "Jeremy Caron",
-        "email": "jeremy.caron@gmail.com"
-    },
+    "author": "Jeremy Caron <jeremy.caron@gmail.com>",
     "main": "./out/extension.js",
     "contributes": {
         "commands": [
@@ -140,12 +137,12 @@
     "homepage": "https://github.com/JeremyCaron/vscode-csharp-organize-usings",
     "repository": {
         "type": "git",
-        "url": "https://github.com/JeremyCaron/vscode-csharp-organize-usings"
+        "url": "git+https://github.com/JeremyCaron/vscode-csharp-organize-usings.git"
     },
     "bugs": {
         "url": "https://github.com/JeremyCaron/vscode-csharp-organize-usings/issues"
     },
     "dependencies": {
-        "watch": "^1.0.2"
+        "watch": "^0.13.0"
     }
 }
