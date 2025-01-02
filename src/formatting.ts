@@ -82,7 +82,6 @@ function processSourceCode(sourceCodeText: string, endOfline: string, options: I
                 // Recombine the sorted usings and directive blocks
                 const sortedUsings = [
                     ...remainingUsings,
-                    // ...Array(options.numEmptyLinesAfterUsings).fill(endOfline),
                     ...directiveBlocks.flatMap(block => [
                         ...block,
                         ...Array(options.numEmptyLinesAfterUsings).fill('')
@@ -140,8 +139,7 @@ function processSourceCode(sourceCodeText: string, endOfline: string, options: I
                 }
             
                 return { directiveBlocks, remainingUsings };
-            }
-                   
+            }                   
         }
 
         // if there are characters, like comments, before usings
