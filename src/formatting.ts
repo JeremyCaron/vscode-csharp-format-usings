@@ -6,8 +6,6 @@ import { IFormatOptions } from './interfaces/IFormatOptions';
 // includes aliased usings and excludes things like comments that contain the word `using` and the using syntax for 
 // disposables (both with and without parens - really unfortunate overloading of the using keyword there C#...)
 export const USING_REGEX = /^(?:(?:[\n]|[\r\n])*(?:#(?:if|else|elif|endif).*(?:[\n]|[\r\n])*|\/\/.*(?:[\n]|[\r\n])*|using\s+(?!.*\s+=\s+)(?:\[.*?\]|\w+(?:\.\w+)*);|using\s+\w+\s*=\s*[\w.]+;)(?:[\n]|[\r\n])*)+/gm;
-// /^(?:(?:#(?:if|else|elif|endif).*[\n]*|using\s+(?!.*\s+=\s+)(?:\[.*?\]|\w+(?:\.\w+)*);[\r\n]*)+)+/gm; 
-// /^(?:(?!\/\/)(?!.*\/\*.*\*\/)(?:#(?:if|else|elif|endif)\s+[^\n]*\n|using\s+(?!(?:\w+\s+)+\w+\s*=\s*)(?:\[.\w+\]|(?:\w+\s*=\s*)?\w+(?:\.\w+)*);[\s\r\n]+))+/gm;
 
 export async function organizeUsingsInEditor(editor: vs.TextEditor, edit: vs.TextEditorEdit)
 {
