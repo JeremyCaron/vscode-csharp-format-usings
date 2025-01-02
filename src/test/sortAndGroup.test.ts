@@ -14,24 +14,36 @@ suite('Usings Tests', () =>
         processUsingsInPreprocessorDirectives: false
     };
 
-    test('regex captures lines it should and excludes those it should not', () => 
-    {
+    test('regex captures blocks it should and excludes those it should not', () => {
         const input = [
             'using System;',
             '// blah blah blah using this other thing...',
             'using ILogger = Serilog.ILogger;',
             'using (Foo xyz = new())',
             'using Foo xyz = new();',
-        ];
-
+        ].join('\n');
+    
         const expected = [
             'using System;',
+            '// blah blah blah using this other thing...',
             'using ILogger = Serilog.ILogger;',
+            ''
         ];
 
-        var results = input.filter(line => USING_REGEX.test(line));
-        assert.deepEqual(results, expected);
+        // Use matchAll to find all matches
+        const matches = Array.from(input.matchAll(USING_REGEX));
+
+        // Validate each match's lines array
+        matches.forEach((match, index) => {
+            const rawBlock = match[0]; // The matched block
+            const lines = rawBlock.split('\n').map(l => l?.trim() ?? ''); // Process lines
+            assert.deepEqual(lines, expected, `Lines for match ${index} do not match expected content.`);
+        });
+
+        // Confirm the total number of matches
+        assert.strictEqual(matches.length, 1, 'Number of matches does not match expected count.');
     });
+    
 
     test('sortUsings should correctly sort using statements', () =>
     {

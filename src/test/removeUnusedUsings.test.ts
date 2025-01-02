@@ -74,7 +74,7 @@ suite('removeUnnecessaryUsings', () => {
             'using ILogger = Serilog.ILogger;'
         ];
 
-        removeUnnecessaryUsings(diagnostics, input);
+        removeUnnecessaryUsings(diagnostics, input, 0);
         assert.deepEqual(input, expected);
     });
 
@@ -118,7 +118,7 @@ suite('removeUnnecessaryUsings', () => {
             'using System.Runtime.CompilerServices;'
         ];
 
-        removeUnnecessaryUsings(diagnostics, input);
+        removeUnnecessaryUsings(diagnostics, input, 0);
         assert.deepEqual(input, expected);
     });
 
@@ -186,7 +186,7 @@ suite('removeUnnecessaryUsings', () => {
             'using ILogger = Serilog.ILogger;'
         ];
 
-        removeUnnecessaryUsings(diagnostics, input);
+        removeUnnecessaryUsings(diagnostics, input, 0);
         assert.deepEqual(input, expected);
     });
 
@@ -254,7 +254,7 @@ suite('removeUnnecessaryUsings', () => {
             'using ILogger = Serilog.ILogger;'
         ];
 
-        removeUnnecessaryUsings(diagnostics, input);
+        removeUnnecessaryUsings(diagnostics, input, 0);
         assert.deepEqual(input, expected);
     });
 
@@ -330,7 +330,7 @@ suite('removeUnnecessaryUsings', () => {
             'using ILogger = Serilog.ILogger;'
         ];
 
-        removeUnnecessaryUsings(diagnostics, input, true);
+        removeUnnecessaryUsings(diagnostics, input, 0);
         assert.deepEqual(input, expected);
     });
 
@@ -412,7 +412,7 @@ suite('removeUnnecessaryUsings', () => {
             'using ILogger = Serilog.ILogger;'
         ];
 
-        removeUnnecessaryUsings(diagnostics, input, true);
+        removeUnnecessaryUsings(diagnostics, input, 0, true);
         assert.deepEqual(input, expected);
     });
 
@@ -470,7 +470,14 @@ suite('removeUnnecessaryUsings', () => {
                 message: 'Using directive is unnecessary.',
                 severity: vs.DiagnosticSeverity.Warning,
                 range: new vs.Range(new vs.Position(12, 0), new vs.Position(12, 1))
-            }
+            },
+            {
+                code: 'CS8019',
+                source: 'csharp',
+                message: 'Using directive is unnecessary.',
+                severity: vs.DiagnosticSeverity.Warning,
+                range: new vs.Range(new vs.Position(15, 0), new vs.Position(15, 1))
+            },
         ];
 
         const expected = [
@@ -486,7 +493,6 @@ suite('removeUnnecessaryUsings', () => {
             'using AwesomeCompany.FooBar.Contracts.RequestModels;',
             'using AwesomeCompany.FooBar.Contracts.ResponseModels.Teasers;',
             '',
-            'using AutoMapper;',
             '',
             'using Microsoft.AspNetCore.Authorization;',
             'using Microsoft.AspNetCore.Mvc;',
@@ -495,7 +501,87 @@ suite('removeUnnecessaryUsings', () => {
             'using ILogger = Serilog.ILogger;'
         ];
 
-        removeUnnecessaryUsings(diagnostics, input);
+        removeUnnecessaryUsings(diagnostics, input, 0);
+        assert.deepEqual(input, expected);
+    });
+
+    test('another complicated case where everything should work right but currently does not', () => {
+        const input = [
+            '',
+            '',
+            '',
+            '',
+            'using System;',
+            'using System.Collections;',
+            'using System.CodeDom;',
+            'using Microsoft.Win32;',
+            '#if UNITY_ANDROID',
+            'using Microsoft.CodeAnalysis.CSharp;',
+            '#else',
+            'using System.Configuration.Assemblies;',
+            '#endif',
+            'using System.Runtime.CompilerServices;',
+            'using System.Configuration;',
+            '',
+            'using Microsoft.CodeAnalysis;',
+            'using Microsoft.Win32.SafeHandles;',
+            'namespace ConsoleAppFramework;'
+        ];
+
+        const diagnostics: vs.Diagnostic[] = [
+            {
+                code: {value: 'IDE0005', target: vs.Uri.parse("null")},
+                source: 'roslyn',
+                message: 'Using directive is unnecessary.',
+                severity: vs.DiagnosticSeverity.Warning,
+                range: new vs.Range(new vs.Position(4, 0), new vs.Position(4, 1))
+            },
+            {
+                code: {value: 'IDE0005', target: vs.Uri.parse("null")},
+                source: 'roslyn',
+                message: 'Using directive is unnecessary.',
+                severity: vs.DiagnosticSeverity.Warning,
+                range: new vs.Range(new vs.Position(6, 0), new vs.Position(7, 1))
+            },
+            {
+                code: {value: 'IDE0005', target: vs.Uri.parse("null")},
+                source: 'roslyn',
+                message: 'Using directive is unnecessary.',
+                severity: vs.DiagnosticSeverity.Warning,
+                range: new vs.Range(new vs.Position(9, 0), new vs.Position(9, 1))
+            },
+            {
+                code: 'CS8019',
+                source: 'csharp',
+                message: 'Using directive is unnecessary.',
+                severity: vs.DiagnosticSeverity.Warning,
+                range: new vs.Range(new vs.Position(11, 0), new vs.Position(11, 1))
+            },
+            {
+                code: {value: 'CS8019', target: vs.Uri.parse("null")},
+                source: 'roslyn',
+                message: 'Using directive is unnecessary.',
+                severity: vs.DiagnosticSeverity.Warning,
+                range: new vs.Range(new vs.Position(14, 0), new vs.Position(17, 1))
+            }
+        ];
+
+        const expected = [
+            '',
+            '',
+            '',
+            '',
+            'using System.Collections;',
+            '#if UNITY_ANDROID',
+            'using Microsoft.CodeAnalysis.CSharp;',
+            '#else',
+            'using System.Configuration.Assemblies;',
+            '#endif',
+            'using System.Runtime.CompilerServices;',
+            'namespace ConsoleAppFramework;'
+        ];
+
+        removeUnnecessaryUsings(diagnostics, input, 0);
         assert.deepEqual(input, expected);
     });
 });
