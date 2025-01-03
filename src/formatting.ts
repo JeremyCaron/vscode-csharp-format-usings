@@ -5,8 +5,9 @@ import { IFormatOptions } from './interfaces/IFormatOptions';
 // this regex had to get a lot more complicated; it now requires the line it matches to end in a semicolon,
 // includes aliased usings and excludes things like comments that contain the word `using` and the using syntax for 
 // disposables (both with and without parens - really unfortunate overloading of the using keyword there C#...)
-export const USING_REGEX = /^(?:(?:[\n]|[\r\n])*(?:#(?:if|else|elif|endif).*(?:[\n]|[\r\n])*|\/\/.*(?:[\n]|[\r\n])*|using\s+(?!.*\s+=\s+)(?:\[.*?\]|\w+(?:\.\w+)*);|using\s+\w+\s*=\s*[\w.]+;)(?:[\n]|[\r\n])*)+/gm;
+export const USING_REGEX = /^(?:(?:[\n]|[\r\n])*(?:#(?:if|else|elif|endif).*(?:[\n]|[\r\n])*|(?:\/\/.*(?:[\n]|[\r\n])*)?(?:using\s+(?!.*\s+=\s+)(?:\[.*?\]|\w+(?:\.\w+)*);|using\s+\w+\s*=\s*[\w.]+;))(?:[\n]|[\r\n])*)+/gm;
 
+// /^(?:(?:[\n]|[\r\n])*(?:#(?:if|else|elif|endif).*(?:[\n]|[\r\n])*|\/\/.*(?:[\n]|[\r\n])*|using\s+(?!.*\s+=\s+)(?:\[.*?\]|\w+(?:\.\w+)*);|using\s+\w+\s*=\s*[\w.]+;)(?:[\n]|[\r\n])*)+/gm;
 export async function organizeUsingsInEditor(editor: vs.TextEditor, edit: vs.TextEditorEdit)
 {
     logToOutputChannel("`Organize C# Usings` command executed");
@@ -228,7 +229,8 @@ export function removeUnnecessaryUsings(diagnostics: vs.Diagnostic[], usings: st
         return [diagnostic.range.start.line - offsetFromFileStart];
     }
 
-    function indexIsContainedByPreprocessorDirective(index: number, ranges: Array<vs.Range>): boolean {
+    function indexIsContainedByPreprocessorDirective(index: number, ranges: Array<vs.Range>): boolean 
+    {
         var result = false;
 
         for (const range of ranges) {
