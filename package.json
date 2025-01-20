@@ -76,20 +76,10 @@
                     "default": true,
                     "description": "Insert blank line between using blocks grouped by first part of namespace."
                 },
-                "csharpOrganizeUsings.removeUnnecessaryUsings": {
+                "csharpOrganizeUsings.disableUnusedUsingsRemoval": {
                     "type": "boolean",
-                    "default": true,
-                    "description": "Remove unnecessary usings."
-                },
-                "csharpOrganizeUsings.numEmptyLinesAfterUsings": {
-                    "type": "number",
-                    "default": 1,
-                    "description": "the number of empty lines would be preserved between using statements and code block."
-                },
-                "csharpOrganizeUsings.numEmptyLinesBeforeUsings": {
-                    "type": "number",
-                    "default": 1,
-                    "description": "The maximum number of empty lines before using statements if there are characters, like comments, before usings."
+                    "default": false,
+                    "description": "Disable the removal of unnecessary usings."
                 },
                 "csharpOrganizeUsings.processUsingsInPreprocessorDirectives": {
                     "type": "boolean",

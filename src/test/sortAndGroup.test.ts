@@ -8,9 +8,7 @@ suite('Usings Tests', () =>
     {
         sortOrder: 'System',
         splitGroups: true,
-        removeUnnecessaryUsings: false,
-        numEmptyLinesAfterUsings: 0,
-        numEmptyLinesBeforeUsings: 0,
+        disableUnusedUsingsRemoval: true,
         processUsingsInPreprocessorDirectives: false
     };
 
@@ -96,7 +94,7 @@ suite('Usings Tests', () =>
         assert.deepEqual(input, expected);
     });
 
-    test('splitGroups should correctly group using statements', () =>
+    test('splitGroups should correctly split using statements', () =>
     {        
         const input = [
             'using System;',
@@ -136,6 +134,137 @@ suite('Usings Tests', () =>
             'using ILogger = Serilog.ILogger;'
         ];
 
+        splitGroups(input);
+        assert.deepEqual(input, expected);
+    });
+
+    test('splitGroups should correctly split using statements with comments at front', () =>
+    {        
+        const input = [
+            '// This benchmark project is based on CliFx.Benchmarks.',
+            '// https://github.com/Tyrrrz/CliFx/tree/master/CliFx.Benchmarks/',
+            'using BenchmarkDotNet.Attributes;',
+            'using BenchmarkDotNet.Engines;',
+            'using BenchmarkDotNet.Order;',
+            'using CliFx;',
+            'using Cocona.Benchmark.External.Commands;',
+            'using CommandLine;',
+            'using ConsoleAppFramework;',
+            'using PowerArgs;',
+            'using Spectre.Console.Cli;',
+            'using System.ComponentModel.DataAnnotations.Schema;',
+            'using BenchmarkDotNet.Columns;'
+        ];
+
+        const expected = [
+            '// This benchmark project is based on CliFx.Benchmarks.',
+            '// https://github.com/Tyrrrz/CliFx/tree/master/CliFx.Benchmarks/',
+            '',
+            'using BenchmarkDotNet.Attributes;',
+            'using BenchmarkDotNet.Engines;',
+            'using BenchmarkDotNet.Order;',
+            '',
+            'using CliFx;',
+            '',
+            'using Cocona.Benchmark.External.Commands;',
+            '',
+            'using CommandLine;',
+            '',
+            'using ConsoleAppFramework;',
+            '',
+            'using PowerArgs;',
+            '',
+            'using Spectre.Console.Cli;',
+            '',
+            'using System.ComponentModel.DataAnnotations.Schema;',
+            '',
+            'using BenchmarkDotNet.Columns;'
+        ];
+        // sortUsings(input, options);
+        splitGroups(input);
+        assert.deepEqual(input, expected);
+    });
+
+    test('sortUsings can handle using statements with comments at front', () =>
+    {
+        // Usings should not be moved ahead of the comments.
+        const input = [
+            '// This benchmark project is based on CliFx.Benchmarks.',
+            '// https://github.com/Tyrrrz/CliFx/tree/master/CliFx.Benchmarks/',
+            'using BenchmarkDotNet.Attributes;',
+            'using BenchmarkDotNet.Engines;',
+            'using BenchmarkDotNet.Order;',
+            'using CliFx;',
+            'using Cocona.Benchmark.External.Commands;',
+            'using CommandLine;',
+            'using ConsoleAppFramework;',
+            'using PowerArgs;',
+            'using Spectre.Console.Cli;',
+            'using System.ComponentModel.DataAnnotations.Schema;',
+            'using BenchmarkDotNet.Columns;'
+        ];
+
+        const expected = [
+            '// This benchmark project is based on CliFx.Benchmarks.',
+            '// https://github.com/Tyrrrz/CliFx/tree/master/CliFx.Benchmarks/',
+            'using System.ComponentModel.DataAnnotations.Schema;',
+            'using BenchmarkDotNet.Attributes;',
+            'using BenchmarkDotNet.Columns;',
+            'using BenchmarkDotNet.Engines;',
+            'using BenchmarkDotNet.Order;',
+            'using CliFx;',
+            'using Cocona.Benchmark.External.Commands;',
+            'using CommandLine;',
+            'using ConsoleAppFramework;',
+            'using PowerArgs;',
+            'using Spectre.Console.Cli;'
+        ];
+        sortUsings(input, options);
+        assert.deepEqual(input, expected);
+    });
+
+    test('sortUsings and splitGroups should correctly format using statements with comments at front', () =>
+    {        
+        const input = [
+            '// This benchmark project is based on CliFx.Benchmarks.',
+            '// https://github.com/Tyrrrz/CliFx/tree/master/CliFx.Benchmarks/',
+            'using BenchmarkDotNet.Attributes;',
+            'using BenchmarkDotNet.Engines;',
+            'using BenchmarkDotNet.Order;',
+            'using CliFx;',
+            'using Cocona.Benchmark.External.Commands;',
+            'using CommandLine;',
+            'using ConsoleAppFramework;',
+            'using PowerArgs;',
+            'using Spectre.Console.Cli;',
+            'using System.ComponentModel.DataAnnotations.Schema;',
+            'using BenchmarkDotNet.Columns;'
+        ];
+
+        const expected = [
+            '// This benchmark project is based on CliFx.Benchmarks.',
+            '// https://github.com/Tyrrrz/CliFx/tree/master/CliFx.Benchmarks/',
+            '',
+            'using System.ComponentModel.DataAnnotations.Schema;',
+            '',
+            'using BenchmarkDotNet.Attributes;',
+            'using BenchmarkDotNet.Columns;',
+            'using BenchmarkDotNet.Engines;',
+            'using BenchmarkDotNet.Order;',
+            '',
+            'using CliFx;',
+            '',
+            'using Cocona.Benchmark.External.Commands;',
+            '',
+            'using CommandLine;',
+            '',
+            'using ConsoleAppFramework;',
+            '',
+            'using PowerArgs;',
+            '',
+            'using Spectre.Console.Cli;'
+        ];
+        sortUsings(input, options);
         splitGroups(input);
         assert.deepEqual(input, expected);
     });

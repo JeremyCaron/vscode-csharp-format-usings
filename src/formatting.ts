@@ -5,7 +5,8 @@ import { IFormatOptions } from './interfaces/IFormatOptions';
 // this regex had to get a lot more complicated; it now requires the line it matches to end in a semicolon,
 // includes aliased usings and excludes things like comments that contain the word `using` and the using syntax for 
 // disposables (both with and without parens - really unfortunate overloading of the using keyword there C#...)
-export const USING_REGEX = /^(?:(?:[\n]|[\r\n])*(?:#(?:if|else|elif|endif).*(?:[\n]|[\r\n])*|(?:\/\/.*(?:[\n]|[\r\n])*)?(?:using\s+(?!.*\s+=\s+)(?:\[.*?\]|\w+(?:\.\w+)*);|using\s+\w+\s*=\s*[\w.]+;))(?:[\n]|[\r\n])*)+/gm;
+// Uses "?:" all over to make each check a non-capturing group; we want one single block of matching text.
+export const USING_REGEX = /^(?:(?:[\n]|[\r\n])*(?:#(?:if|else|elif|endif).*(?:[\n]|[\r\n])*|(?:\/\/.*(?:[\n]|[\r\n])*)*(?:using\s+(?!.*\s+=\s+)(?:\[.*?\]|\w+(?:\.\w+)*);|using\s+\w+\s*=\s*[\w.]+;))(?:[\n]|[\r\n])*)+/gm;
 
 // /^(?:(?:[\n]|[\r\n])*(?:#(?:if|else|elif|endif).*(?:[\n]|[\r\n])*|\/\/.*(?:[\n]|[\r\n])*|using\s+(?!.*\s+=\s+)(?:\[.*?\]|\w+(?:\.\w+)*);|using\s+\w+\s*=\s*[\w.]+;)(?:[\n]|[\r\n])*)+/gm;
 export async function organizeUsingsInEditor(editor: vs.TextEditor, edit: vs.TextEditorEdit)
@@ -55,7 +56,7 @@ function processSourceCode(sourceCodeText: string, endOfline: string, options: I
 
         var usings = lines;
 
-        if (options.removeUnnecessaryUsings)
+        if (!options.disableUnusedUsingsRemoval)
         {
             removeUnnecessaryUsings(diagnostics, usings, firstUsingLineNumInFile, options.processUsingsInPreprocessorDirectives);
         }
@@ -65,39 +66,43 @@ function processSourceCode(sourceCodeText: string, endOfline: string, options: I
         // sort and split
         if (usings.length > 0)
         {
-            var directives = findPreprocessorRanges(usings);
-            if (!directives || directives.length == 0)
-            {
-                sortUsings(usings, options);
-            }
-            else if (directives && directives.length > 0)
-            {
-                // Extract directive blocks and non-directive usings
-                const { directiveBlocks, remainingUsings } = separateDirectivesFromUsings(usings);
-
-                // Sort the remaining usings
-                sortUsings(remainingUsings, options);
-
-                // Recombine the sorted usings and directive blocks
-                const sortedUsings = [
-                    ...remainingUsings,
-                    ...directiveBlocks.flatMap(block => [
-                        ...block,
-                        ...Array(options.numEmptyLinesAfterUsings).fill('')
-                    ])
-                ];
-
-                // Remove any trailing empty lines to ensure a clean output
-                while (sortedUsings.length > 0 && sortedUsings[sortedUsings.length - 1] === "") {
-                    sortedUsings.pop();
-                }
-
-                usings = sortedUsings;
-            }            
+            handleSortingWithOrWithoutDirectives(usings);    
 
             if (options.splitGroups)
             {
                 splitGroups(usings);
+            }
+                        
+            function handleSortingWithOrWithoutDirectives(usings: string[]) {
+                var directives = findPreprocessorRanges(usings);
+                if (!directives || directives.length == 0)
+                {
+                    sortUsings(usings, options);
+                }
+                else if (directives && directives.length > 0)
+                {
+                    // Extract directive blocks and non-directive usings
+                    const { directiveBlocks, remainingUsings } = separateDirectivesFromUsings(usings);
+
+                    // Sort the remaining usings
+                    sortUsings(remainingUsings, options);
+
+                    // Recombine the sorted usings and directive blocks
+                    const sortedUsings = [
+                        ...remainingUsings,
+                        ...directiveBlocks.flatMap(block => [
+                            ...block,
+                            ...Array(1).fill('')
+                        ])
+                    ];
+
+                    // Remove any trailing empty lines to ensure a clean output
+                    while (sortedUsings.length > 0 && sortedUsings[sortedUsings.length - 1] === "") {
+                        sortedUsings.pop();
+                    }
+
+                    usings = sortedUsings;
+                }        
             }
 
             function separateDirectivesFromUsings(usings: string[]): { directiveBlocks: string[][], remainingUsings: string[] } {
@@ -145,7 +150,7 @@ function processSourceCode(sourceCodeText: string, endOfline: string, options: I
         if (content.substring(0, firstUsingIndexInContent).search(/./) >= 0)
         {
             // Keep numEmptyLinesBeforeUsings empty lines before usings if there are in the source
-            for (var i = Math.min(options.numEmptyLinesBeforeUsings, lines.length - 1); i >= 0; i--)
+            for (var i = Math.min(1, lines.length - 1); i >= 0; i--)
             {
                 if (lines[i].length === 0)
                 {
@@ -157,7 +162,7 @@ function processSourceCode(sourceCodeText: string, endOfline: string, options: I
         // if no using left, there is no need to insert extra empty lines
         if (usings.length > 0)
         {
-            for (var i = 0; i <= options.numEmptyLinesAfterUsings; i++)
+            for (var i = 0; i <= 1; i++)
             {
                 usings.push('');
             }
@@ -178,10 +183,6 @@ function replaceCode(source: string, cb: Func<string, string>): string
     const regexp = new RegExp(USING_REGEX.source, `gm${flags}`);
     return source.replace(regexp, (s: string, ...args: string[]) =>
     {
-        if (s[0] === '"' || s[0] === '\'' || (s[0] === '/' && (s[1] === '/' || s[1] === '*')))
-        {
-            return s;
-        }
         return cb(s, ...args.slice(1));
     });
 }
@@ -246,13 +247,20 @@ export function removeUnnecessaryUsings(diagnostics: vs.Diagnostic[], usings: st
 
 export function sortUsings(usings: string[], options: IFormatOptions) 
 {
+    const baseNS = /[\ |\t]*using\s+(\w+).*/; // Matches lines starting with "using"
+
+    // Separate leading comments or blank lines
+    const firstUsingIndex = usings.findIndex(line => baseNS.test(line));    
+    const leadingComments = firstUsingIndex > 0 ? usings.slice(0, firstUsingIndex) : [];
+    const usingStatements = usings.slice(firstUsingIndex);
+
     const trimSemiColon = /^\s+|;\s*$/;
     const aliasRegex = /^\s*using\s+(\w+\s*=\s*)?/;
 
     const aliases: string[] = [];
     const nonAliases: string[] = [];
 
-    for (const statement of usings) 
+    for (const statement of usingStatements) 
     {
         const match = statement.match(aliasRegex);
         if (match && match[1]) 
@@ -310,36 +318,47 @@ export function sortUsings(usings: string[], options: IFormatOptions)
     usings.length = 0;
 
     // Push the sorted nonAliases and aliases to the original usings array
-    usings.push(...nonAliases, ...aliases);
+    usings.push(...leadingComments, ...nonAliases, ...aliases);
     removeDuplicates(usings);
 }
 
 export function splitGroups(usings: string[]) 
 {
-    let i = usings.length - 1;
-    const baseNS = /\s*using\s+(\w+).*/;
-    const aliasNS = /\s*using\s+\w+\s*=/;
+    const baseNS = /[\ |\t]*using\s+(\w+).*/; // Matches lines starting with "using"
+    const aliasNS = /[\ |\t]*using\s+[\w\.]*\s*=/; // Matches alias "using" statements
 
-    if (usings.length > 1) 
-    {
-        let lastNS = usings[i--].replace(baseNS, '$1');
+    // Separate leading comments or blank lines
+    const firstUsingIndex = usings.findIndex(line => baseNS.test(line));
+    const leadingComments = firstUsingIndex > 0 ? usings.slice(0, firstUsingIndex) : [];
+    const usingStatements = usings.slice(firstUsingIndex);
+
+    // Ensure exactly one blank line between comments and the first `using`
+    if (leadingComments.length > 0 && leadingComments[leadingComments.length - 1].trim() !== '') {
+        leadingComments.push('');
+    }
+
+    // Process `using` statements for grouping
+    let i = usingStatements.length - 1;
+    if (usingStatements.length > 1) {
+        let lastNS = usingStatements[i--].replace(baseNS, '$1');
         let nextNS: string;
 
-        for (; i >= 0; i--) 
-        {
-            if (aliasNS.test(usings[i])) 
-            {
+        for (; i >= 0; i--) {
+            if (aliasNS.test(usingStatements[i])) {
                 continue;
             }
 
-            nextNS = usings[i].replace(baseNS, '$1');
-            if (nextNS !== lastNS) 
-            {
+            nextNS = usingStatements[i].replace(baseNS, '$1');
+            if (nextNS !== lastNS) {
                 lastNS = nextNS;
-                usings.splice(i + 1, 0, '');
+                usingStatements.splice(i + 1, 0, '');
             }
         }
     }
+
+    // Combine leading comments and grouped `using` statements
+    usings.length = 0; // Clear the original array
+    usings.push(...leadingComments, ...usingStatements);
 }
 
 function findPreprocessorRanges(usings: string[]): Array<vs.Range> {
@@ -419,10 +438,8 @@ function getDefaultFormatOptions(): IFormatOptions
     return {
         sortOrder: cfg.get<string>('sortOrder', 'System'),
         splitGroups: cfg.get<boolean>('splitGroups', true),
-        removeUnnecessaryUsings: cfg.get<boolean>('removeUnnecessaryUsings', true),
-        numEmptyLinesAfterUsings: cfg.get<number>('numEmptyLinesAfterUsings', 1),
-        numEmptyLinesBeforeUsings: cfg.get<number>('numEmptyLinesBeforeUsings', 1),
-        processUsingsInPreprocessorDirectives: cfg.get<boolean>('processUsingsInPreprocessorDirectives', false),
+        disableUnusedUsingsRemoval: cfg.get<boolean>('disableUnusedUsingsRemoval', false),
+        processUsingsInPreprocessorDirectives: cfg.get<boolean>('processUsingsInPreprocessorDirectives', false)
     };
 }
 

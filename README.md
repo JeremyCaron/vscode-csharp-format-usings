@@ -12,6 +12,7 @@ This extension helps organize C# `using` statements and is meant to replicate th
 
 ## Version History
 
+- **1.0.7**: 
 - **1.0.6**: Fixed a bug that would prevent all unused usings from being removed on the first execution of the "Organize C# Usings" command.  The line numbers returned by vs.languages.getDiagnostics were being misinterpreted.  New unit tests around the removal of unused usings.
 - **1.0.5**: Adds support for running natively on save, improved handling of duplicate removal during cleanup, an output panel channel for debug output, and various improvements in source code.
 - **1.0.4**: Handles IDE0005 diagnostics for unused usings from Roslyn, enabling compatibility with the C# extension when OmniSharp is disabled.
@@ -24,9 +25,8 @@ This extension helps organize C# `using` statements and is meant to replicate th
 
 - `sortOrder`: Sets the order of namespaces. Values should be space-separated. "System" by default.
 - `splitGroups`: Inserts a blank line between using blocks grouped by the first part of the namespace. Enabled by default.
-- `removeUnnecessaryUsings`: Removes unnecessary `using` statements if true. Enabled by default.
-- `numEmptyLinesAfterUsings`: The number of empty lines preserved between the `using` directives and the code block.
-- `numEmptyLinesBeforeUsings`: The maximum number of empty lines before the `using` directives if there are characters (like comments) before them.
+- `disableUnusedUsingsRemoval`: Disables the removal of unused usings (enabled by default otherwise).  Defaults to false.
+- `processUsingsInPreprocessorDirectives`: 
 
 ## Execution "On Save"
 
