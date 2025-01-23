@@ -1,5 +1,6 @@
 import * as vs from 'vscode';
 import { logToOutputChannel } from "./logger";
+import { isProjectRestored } from "./utils";
 import { IFormatOptions } from './interfaces/IFormatOptions';
 
 // this regex had to get a lot more complicated; it now requires the line it matches to end in a semicolon,
@@ -26,19 +27,28 @@ export async function organizeUsingsInEditor(editor: vs.TextEditor, edit: vs.Tex
     }
     catch (ex) 
     {
+        // Show a modal popup to inform the user
         let message = 'Unknown Error';
         if (ex instanceof Error) message = ex.message;
-        vs.window.showWarningMessage(message);
+        logToOutputChannel("Error: " + message);
     }
 };
 
 function processEditorContent(editor: vs.TextEditor, options: IFormatOptions): string 
 {
     const beforeContent = editor.document.getText();
+    const filePath = editor.document.uri.fsPath;
+    const hasBeenRestored = isProjectRestored(filePath);
     const endOfline = editor.document.eol === vs.EndOfLine.LF ? '\n' : '\r\n';
-    const diagnostics = vs.languages.getDiagnostics(editor.document.uri);
-
-    return processSourceCode(beforeContent, endOfline, options, diagnostics);
+    if (hasBeenRestored)
+    {
+        const diagnostics = vs.languages.getDiagnostics(editor.document.uri);
+        return processSourceCode(beforeContent, endOfline, options, diagnostics);
+    }
+    else
+    {
+        throw new Error('No action was taken because the project has not been restored. Please restore the project and try again.');
+    }    
 }
 
 function processSourceCode(sourceCodeText: string, endOfline: string, options: IFormatOptions, diagnostics: vs.Diagnostic[])
