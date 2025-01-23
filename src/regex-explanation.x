@@ -1,80 +1,70 @@
-This regex is quite complex and is used for matching blocks of using statements in a C# file. I'll break it down piece by piece for clarity:
-Regex Overview:
+/^(?:(?:[\n]|[\r\n])*(?:#(?:if|else|elif|endif).*(?:[\n]|[\r\n])*|(?:\/\/.*(?:[\n]|[\r\n])*)*(?:using\s+(?!.*\s+=\s+)(?:\[.*?\]|\w+(?:\.\w+)*);|using\s+\w+\s*=\s*[\w.]+;))(?:[\n]|[\r\n])*)+/gm
 
-The regex has two main parts:
+Explanation:
+1. /^.../gm
 
-    Outer structure: It defines the overall scope of the match, capturing multiple lines of relevant text.
-    Inner structure: It specifies the types of lines that can be included within the matched block.
+    ^: Ensures the regex matches from the start of a line.
+    g: Global flag ensures the regex finds all matches, not just the first one.
+    m: Multiline flag treats the input as multiple lines, allowing ^ and $ to match the start and end of each line.
 
-1. Outer Structure
-/^(?: ... )+/gm
+2. (?:...)+
 
-    ^: Matches the beginning of a line (enabled by the m flag for multiline mode).
-    (?: ... )+: A non-capturing group that repeats one or more times. This ensures the regex can match multiple lines conforming to the defined structure.
-    /gm:
-        g: Global flag, allowing the regex to find all matches in the input, not just the first.
-        m: Multiline flag, treating ^ and $ as the start and end of a line rather than the entire input.
+    (?:...): A non-capturing group. This groups the enclosed pattern without creating a capturing group, which avoids unnecessary backreferences.
+    +: Matches one or more occurrences of the non-capturing group.
 
-2. Inner Structure
-(?:[\n]|[\r\n])*
+3. (?:[\n]|[\r\n])*
 
-    Matches zero or more blank lines (empty lines or lines with only newline characters).
-    (?: ... ): A non-capturing group.
-    [\n]: Matches a single newline (\n).
-    [\r\n]: Matches a Windows-style newline (\r\n).
-    *: Matches zero or more occurrences.
+    (?:[\n]|[\r\n]): Matches a single newline character (\n) or a Windows-style newline (\r\n).
+    *: Matches zero or more newlines. This allows optional blank lines at the start of the matched block.
 
-(?:#(?:if|else|elif|endif).*(?:[\n]|[\r\n])*)
+4. (?:#(?:if|else|elif|endif).*(?:[\n]|[\r\n])*)
 
-    Matches lines containing preprocessor directives like #if, #else, #elif, or #endif.
-    #(?:if|else|elif|endif): Matches # followed by any of the specified directives (if, else, elif, endif).
-        (?:if|else|elif|endif): A non-capturing group for the alternatives.
-    .*: Matches the rest of the line (any characters).
-    (?:[\n]|[\r\n])*: Matches any trailing blank lines.
+    #(?:if|else|elif|endif): Matches preprocessor directives (#if, #else, #elif, #endif) at the start of a line.
+        (?:if|else|elif|endif): A non-capturing group that matches one of the specified directives.
+    .*: Matches the rest of the line after the directive (including any condition or comment).
+    (?:[\n]|[\r\n])*: Matches zero or more newline characters, ensuring any blank lines following the directive are included.
 
-|\/\/.*(?:[\n]|[\r\n])*
+5. (?:\/\/.*(?:[\n]|[\r\n])*)*
 
-    Matches single-line comments starting with // and any trailing blank lines.
-    \/\/: Matches the literal //.
-    .*: Matches the rest of the comment.
-    (?:[\n]|[\r\n])*: Matches any trailing blank lines.
+    \/\/.*: Matches single-line comments starting with // and everything following on the same line.
+    (?:[\n]|[\r\n])*: Matches zero or more newline characters, allowing for blank lines after comments.
+    *: Matches zero or more occurrences of comment lines (with optional blank lines between them).
 
-|using\s+(?!.*\s+=\s+)(?:\[.*?\]|\w+(?:\.\w+)*);
+6. (?:using\s+(?!.*\s+=\s+)(?:\[.*?\]|\w+(?:\.\w+)*);|using\s+\w+\s*=\s*[\w.]+;)
 
-    Matches using statements that do not define an alias (=).
-    using\s+: Matches using followed by one or more spaces.
-    (?!.*\s+=\s+): A negative lookahead ensuring the line does not contain an alias definition (=).
-    (?:\[.*?\]|\w+(?:\.\w+)*);: Matches either:
-        \[.*?\]: An attribute enclosed in square brackets (e.g., [SomeAttribute]).
-        \w+(?:\.\w+)*: A namespace or type, possibly qualified with dots (e.g., System.Collections.Generic).
-    ;: Ensures the statement ends with a semicolon.
+    (?:...|...): Matches either of the two specified patterns for using statements:
+        using\s+(?!.*\s+=\s+)(?:\[.*?\]|\w+(?:\.\w+)*);
+            using\s+: Matches the keyword using followed by one or more spaces.
+            (?!.*\s+=\s+): Negative lookahead ensures the line does not contain an assignment (=).
+            (?:\[.*?\]|\w+(?:\.\w+)*): Matches either:
+                \[.*?\]: An attribute enclosed in square brackets (e.g., [SomeAttribute]).
+                \w+(?:\.\w+)*: A namespace or class name (e.g., System.IO).
+            ;: Matches the semicolon at the end of the statement.
+        using\s+\w+\s*=\s*[\w.]+;
+            using\s+: Matches the keyword using followed by one or more spaces.
+            \w+\s*=\s*[\w.]+: Matches an alias assignment in the form alias = Namespace or alias = Namespace.Class.
+            ;: Matches the semicolon at the end of the statement.
+    |: Alternates between the two using statement patterns.
 
-|using\s+\w+\s*=\s*[\w.]+;
+7. (?:[\n]|[\r\n])*
 
-    Matches using statements that define an alias.
-    using\s+: Matches using followed by one or more spaces.
-    \w+: Matches the alias name.
-    \s*=\s*: Matches an equals sign (=) with optional spaces around it.
-    [\w.]+: Matches the namespace or type being aliased (e.g., System.Text).
-    ;: Ensures the statement ends with a semicolon.
+    Matches zero or more newlines following a using statement or block.
 
-Summary of Inner Group:
+8. +
 
-The inner group matches any of the following:
+    Ensures the entire block repeats as a unit, allowing multiple contiguous matches for # directives, comments, and using statements.
+
+Summary
+
+This regex is designed to match blocks of using statements in C# files, including optional leading comments and preprocessor directives. It accounts for:
 
     Preprocessor directives (#if, #else, etc.).
-    Single-line comments (//).
-    using statements without aliases.
-    using statements with aliases.
+    Comments (single-line //).
+    Standard using statements, with or without attributes or namespaces.
+    Alias using statements (using alias = ...).
 
-3. Final Assembly
+Modifying Tips
 
-The entire regex matches blocks of lines that:
-
-    May include blank lines.
-    Contain preprocessor directives, comments, or using statements.
-    Are repeated one or more times (+).
-
-Use Case:
-
-This regex is likely used in a tool to identify and manipulate blocks of using directives in C# code, while handling nuances like preprocessor directives and alias definitions. It is carefully constructed to ensure flexibility and correctness in parsing complex C# files.
+    - Adding new directives: To include more preprocessor directives, extend the (?:if|else|elif|endif) group.
+    - Handling additional comment types: Add new patterns for comment styles if needed.
+    - Supporting new using patterns: Extend the (?:using\s+...) section with additional logic for matching.
